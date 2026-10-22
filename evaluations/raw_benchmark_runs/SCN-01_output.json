@@ -1,0 +1,11 @@
+﻿```json
+{
+  "nudge": {
+    "problem_specification": {
+      "target_behavior": "Timely micro-loan repayment within 14 days.",
+      "target_audience": "Female market vendors in Lagos.",
+      "domain": "Financial Inclusion.",
+      "current_message": "Dear customer, loan repayment is due soon. Avoid penalties.",
+      "core_challenge": [
+        "High cognitive load.",
+        "

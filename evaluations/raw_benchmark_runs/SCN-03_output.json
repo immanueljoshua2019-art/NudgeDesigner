@@ -1,0 +1,10 @@
+﻿```json
+{
+  "nudge": {
+    "problem_specification": {
+      "target_behavior": "Purchasing fertilizer at post-harvest liquidity peak",
+      "target_audience": "Smallholder maize farmers in Western Kenya",
+      "domain": "Agriculture",
+      "current_message": "Use quality fertilizer at planting time to double crop yield.",
+      "core_challenge": "Temporal discounting; cash reserves spent before planting"
+    },

@@ -1,0 +1,18 @@
+{
+  "name": "nudgedesigner-3",
+  "version": "3.0.0",
+  "type": "module",
+  "description": "NudgeDesigner 3.0 Behavioral Intelligence Engine with Busara Empirical Corpus and YarnGPT African Speech",
+  "scripts": {
+    "build": "echo 'Ready for Netlify deployment'"
+  },
+  "keywords": [
+    "behavioral-economics",
+    "busara",
+    "nudgedesigner",
+    "yarngpt",
+    "african-voice"
+  ],
+  "author": "",
+  "license": "ISC"
+}

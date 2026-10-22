@@ -1,0 +1,9 @@
+﻿```json
+{
+  "nudge_id": "ND3-001",
+  "problem_specification": {
+    "target_behavior": "Completing vehicle safety inspection.",
+    "target_audience": "Motorcycle couriers in Nairobi, Kenya.",
+    "domain": "Gig Labor Bandwidth.",
+    "current_message": "Safety first: inspect brakes and tires before opening app.",
+    "core_challenge": "Bandwidth tax

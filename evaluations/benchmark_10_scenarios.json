@@ -1,0 +1,209 @@
+{
+  "benchmark_metadata": {
+    "title": "NudgeDesigner 3.0 Empirical Evaluation Benchmark",
+    "version": "1.0.0",
+    "evaluated_scenarios_count": 10,
+    "scoring_dimensions": [
+      "behavioral_relevance",
+      "clarity",
+      "feasibility",
+      "ethicality",
+      "mechanism_alignment",
+      "testability"
+    ],
+    "scale": "1-10",
+    "overall_composite_average": 9.20
+  },
+  "scenarios": [
+    {
+      "id": "SCN-01",
+      "domain": "Financial Inclusion & Digital Credit",
+      "geography": "Lagos, Nigeria (Urban Informal Markets)",
+      "target_behavior": "Timely micro-loan repayment within 14 days of disbursement",
+      "target_audience": "Female market vendors and informal food stall operators",
+      "baseline_message": "Dear customer, your loan repayment is due soon. Avoid penalties and interest charges.",
+      "diagnosed_friction": "High cognitive load, cashflow volatility, and penalty threat inducing reactance",
+      "redesigned_mechanism": "Loss aversion on future credit line + 1-tap USSD default architecture",
+      "scores": {
+        "behavioral_relevance": 9.5,
+        "clarity": 9.4,
+        "feasibility": 9.0,
+        "ethicality": 9.8,
+        "mechanism_alignment": 9.2,
+        "testability": 9.5
+      },
+      "average_score": 9.40
+    },
+    {
+      "id": "SCN-02",
+      "domain": "Public Health & Maternal Care",
+      "geography": "Kano, Nigeria (Semi-urban Primary Healthcare)",
+      "target_behavior": "Completing 4 Antenatal Care (ANC) visits and newborn immunization",
+      "target_audience": "First-time mothers and young expectant families",
+      "baseline_message": "Health is wealth. Visit the clinic every month for your baby's immunizations.",
+      "diagnosed_friction": "Ambiguous scheduling, clinic wait sludge, reliance on male household head permission",
+      "redesigned_mechanism": "Morning-of SMS prompts + in-kind delivery pack incentive framing",
+      "scores": {
+        "behavioral_relevance": 9.2,
+        "clarity": 9.0,
+        "feasibility": 8.8,
+        "ethicality": 9.6,
+        "mechanism_alignment": 9.0,
+        "testability": 9.2
+      },
+      "average_score": 9.13
+    },
+    {
+      "id": "SCN-03",
+      "domain": "Agriculture & Climate Adaptation",
+      "geography": "Western Kenya (Kakamega / Bungoma Smallholders)",
+      "target_behavior": "Purchasing hybrid seed and basal fertilizer at post-harvest liquidity peak",
+      "target_audience": "Smallholder maize farmers managing subsistence acreage",
+      "baseline_message": "Use quality fertilizer at planting time to double your crop yield.",
+      "diagnosed_friction": "Temporal discounting; cash reserves spent during lean season before planting time",
+      "redesigned_mechanism": "SAFI post-harvest pre-commitment vouchers with delayed free delivery",
+      "scores": {
+        "behavioral_relevance": 9.4,
+        "clarity": 9.2,
+        "feasibility": 8.9,
+        "ethicality": 9.5,
+        "mechanism_alignment": 9.3,
+        "testability": 9.4
+      },
+      "average_score": 9.28
+    },
+    {
+      "id": "SCN-04",
+      "domain": "Gender Dynamics & Intra-Household Bargaining",
+      "geography": "Arusha, Tanzania (Informal Peri-Urban)",
+      "target_behavior": "Maintaining personal mobile money PIN privacy and secret savings accumulation",
+      "target_audience": "Women micro-entrepreneurs living in extended kin households",
+      "baseline_message": "Keep your mobile money PIN secret for financial security.",
+      "diagnosed_friction": "Social tax from relatives and partners demanding phone inspection",
+      "redesigned_mechanism": "Discreet biometric secondary lock-box with neutral generic confirmation SMS",
+      "scores": {
+        "behavioral_relevance": 9.0,
+        "clarity": 9.1,
+        "feasibility": 8.6,
+        "ethicality": 9.7,
+        "mechanism_alignment": 9.1,
+        "testability": 8.9
+      },
+      "average_score": 9.07
+    },
+    {
+      "id": "SCN-05",
+      "domain": "Civic Trust & Municipal Revenue Compliance",
+      "geography": "Accra, Ghana (Makola & Kaneshie Markets)",
+      "target_behavior": "Paying annual market stall levy via local government digital portal",
+      "target_audience": "Independent informal market traders",
+      "baseline_message": "Tax evasion is a crime under Section 42. Pay your stall fee immediately.",
+      "diagnosed_friction": "Low institutional trust; zero perceived public good reciprocity",
+      "redesigned_mechanism": "Visible reciprocity attribution (linking levies to market security and refuse clearing)",
+      "scores": {
+        "behavioral_relevance": 9.3,
+        "clarity": 9.2,
+        "feasibility": 8.8,
+        "ethicality": 9.4,
+        "mechanism_alignment": 9.0,
+        "testability": 9.3
+      },
+      "average_score": 9.17
+    },
+    {
+      "id": "SCN-06",
+      "domain": "Education & Foundational Literacy",
+      "geography": "Kaduna, Nigeria (Public Primary Schools)",
+      "target_behavior": "Primary school teachers delivering daily 45-minute leveled reading interventions",
+      "target_audience": "Rural primary school educators",
+      "baseline_message": "Teachers must strictly follow the foundational literacy curriculum timetable.",
+      "diagnosed_friction": "Curriculum overload; teachers teaching to grade rather than learning level",
+      "redesigned_mechanism": "Teaching at the Right Level (TaRL) peer cohort recognition + weekly bite-sized SMS guides",
+      "scores": {
+        "behavioral_relevance": 9.1,
+        "clarity": 9.3,
+        "feasibility": 9.0,
+        "ethicality": 9.8,
+        "mechanism_alignment": 9.2,
+        "testability": 9.1
+      },
+      "average_score": 9.25
+    },
+    {
+      "id": "SCN-07",
+      "domain": "Water, Sanitation & Hygiene (WASH)",
+      "geography": "Eastern Uganda (Tororo District)",
+      "target_behavior": "Treating collected borehole drinking water with dilute chlorine solution",
+      "target_audience": "Rural household water collectors",
+      "baseline_message": "Boil or chlorinate all drinking water to prevent diarrhea and cholera.",
+      "diagnosed_friction": "Taste aversion, fuel cost for boiling, delay between collection and consumption",
+      "redesigned_mechanism": "Free point-of-collection chlorine dispensers making treatment visible and effortless",
+      "scores": {
+        "behavioral_relevance": 9.4,
+        "clarity": 9.5,
+        "feasibility": 9.2,
+        "ethicality": 9.6,
+        "mechanism_alignment": 9.4,
+        "testability": 9.6
+      },
+      "average_score": 9.45
+    },
+    {
+      "id": "SCN-08",
+      "domain": "Climate Resilience & Financial Risk",
+      "geography": "Nakuru & Naivasha, Kenya (Arid Agro-Pastoral)",
+      "target_behavior": "Enrolling in parametric satellite drought index micro-insurance",
+      "target_audience": "Agro-pastoralists facing erratic rainy seasons",
+      "baseline_message": "Insure your herd against drought disaster for KSh 1,500.",
+      "diagnosed_friction": "Ambiguity aversion; distrust of insurance payouts and claims processes",
+      "redesigned_mechanism": "Bundled opt-out seed purchase insurance + automatic mobile money satellite trigger",
+      "scores": {
+        "behavioral_relevance": 8.9,
+        "clarity": 8.8,
+        "feasibility": 8.5,
+        "ethicality": 9.5,
+        "mechanism_alignment": 8.9,
+        "testability": 9.0
+      },
+      "average_score": 8.93
+    },
+    {
+      "id": "SCN-09",
+      "domain": "Scarcity & Cognitive Bandwidth (Gig Platforms)",
+      "geography": "Nairobi, Kenya (Urban Logistics Couriers)",
+      "target_behavior": "Completing daily vehicle safety inspection and logging shift hours",
+      "target_audience": "Boda-boda motorcycle couriers",
+      "baseline_message": "Safety first: inspect your brakes and tires before opening the driver app.",
+      "diagnosed_friction": "Bandwidth tax; high urgency to accept early morning rides immediately",
+      "redesigned_mechanism": "3-question pictorial USSD micro-check with streak rewards for maintenance",
+      "scores": {
+        "behavioral_relevance": 9.2,
+        "clarity": 9.4,
+        "feasibility": 9.1,
+        "ethicality": 9.6,
+        "mechanism_alignment": 9.1,
+        "testability": 9.2
+      },
+      "average_score": 9.27
+    },
+    {
+      "id": "SCN-10",
+      "domain": "Civic Governance & Sludge Auditing",
+      "geography": "Ogun State, Nigeria (Inter-State Transport Hubs)",
+      "target_behavior": "Reporting extortion and illegal transit checkpoints via anonymous channel",
+      "target_audience": "Commercial bus drivers (Danfo / Korope operators)",
+      "baseline_message": "Report police and union extortion to the anti-corruption hotline.",
+      "diagnosed_friction": "Retaliation fear; cynicism that complaints lead to no administrative consequence",
+      "redesigned_mechanism": "Anonymous WhatsApp voice memo with automated tracking ticket number and union peer shield",
+      "scores": {
+        "behavioral_relevance": 9.0,
+        "clarity": 9.1,
+        "feasibility": 8.7,
+        "ethicality": 9.7,
+        "mechanism_alignment": 9.0,
+        "testability": 9.0
+      },
+      "average_score": 9.08
+    }
+  ]
+}

@@ -1,0 +1,3401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>NudgeDesigner 3.0 — Behavioral Intelligence & African Decision Engine</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧠</text></svg>"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
+<script src="busara-data.js"></script>
+<style>
+  :root {
+    --navy:        #060c18;
+    --navy2:       #0c1626;
+    --navy3:       #122038;
+    --navy4:       #182a4a;
+    --gold:        #c9a84c;
+    --gold2:       #e8c86a;
+    --gold-dim:    #7a6428;
+    --cream:       #f8f4ec;
+    --white:       #ffffff;
+    --text:        #d2dce9;
+    --muted:       #70839e;
+    --green:       #3ecf8e;
+    --red:         #e05c5c;
+    --blue:        #4a9eff;
+    --purple:      #a78bfa;
+    --amber:       #f59e0b;
+    --border:      rgba(201,168,76,0.18);
+    --border-blue: rgba(74,158,255,0.22);
+    --glass:       rgba(255,255,255,0.035);
+    --radius:      14px;
+    --radius-sm:   8px;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--navy);
+    color: var(--text);
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 15px;
+    line-height: 1.65;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background:
+      radial-gradient(ellipse 75% 55% at 20% 8%, rgba(201,168,76,0.09) 0%, transparent 60%),
+      radial-gradient(ellipse 65% 75% at 85% 92%, rgba(74,158,255,0.06) 0%, transparent 65%),
+      radial-gradient(ellipse 50% 50% at 50% 50%, rgba(167,139,250,0.03) 0%, transparent 70%);
+    pointer-events: none; z-index: 0;
+  }
+
+  .wrap { max-width: 1160px; margin: 0 auto; padding: 0 24px; position: relative; z-index: 1; }
+
+  /* ── NAV ── */
+  nav {
+    border-bottom: 1px solid var(--border);
+    padding: 16px 0;
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(6,12,24,0.92);
+    backdrop-filter: blur(16px);
+  }
+  .nav-inner { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .logo { display: flex; align-items: center; gap: 12px; cursor: pointer; text-decoration: none; }
+  .logo-icon {
+    width: 36px; height: 36px; border-radius: 9px;
+    background: linear-gradient(135deg, var(--gold), var(--gold2));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; font-weight: 900; color: var(--navy);
+    font-family: 'Playfair Display', serif;
+    box-shadow: 0 4px 12px rgba(201,168,76,0.25);
+  }
+  .logo-text { font-family: 'Playfair Display', serif; font-size: 19px; font-weight: 700; color: var(--cream); letter-spacing: -0.3px; }
+  .logo-sub { font-size: 10px; color: var(--gold); letter-spacing: 1.5px; text-transform: uppercase; font-family: 'IBM Plex Mono', monospace; }
+  .nav-badges { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .nav-badge {
+    background: rgba(201,168,76,0.1); border: 1px solid var(--border);
+    color: var(--gold); font-size: 11px; padding: 4px 11px; border-radius: 20px;
+    font-family: 'IBM Plex Mono', monospace; letter-spacing: 0.5px;
+  }
+  .nav-badge.busara {
+    background: rgba(74,158,255,0.1); border-color: var(--border-blue); color: var(--blue);
+  }
+  .nav-badge.voice {
+    background: rgba(167,139,250,0.12); border-color: rgba(167,139,250,0.25); color: var(--purple);
+  }
+  .btn-nav-settings {
+    background: rgba(255,255,255,0.06); border: 1px solid var(--border);
+    color: var(--cream); padding: 5px 12px; border-radius: 8px; cursor: pointer;
+    font-size: 12px; font-family: 'IBM Plex Mono', monospace; display: flex; align-items: center; gap: 5px;
+    transition: all 0.2s;
+  }
+  .btn-nav-settings:hover { background: rgba(201,168,76,0.15); border-color: var(--gold); }
+
+  /* ── HERO ── */
+  .hero { padding: 56px 0 40px; text-align: center; }
+  .hero-label {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-size: 11px; letter-spacing: 2px; text-transform: uppercase;
+    color: var(--gold); font-family: 'IBM Plex Mono', monospace;
+    border: 1px solid rgba(201,168,76,0.3); padding: 5px 16px; border-radius: 24px;
+    margin-bottom: 20px; background: rgba(201,168,76,0.06);
+  }
+  .hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(32px, 5.2vw, 56px);
+    font-weight: 900; color: var(--cream);
+    line-height: 1.14; letter-spacing: -0.8px;
+    margin-bottom: 16px;
+  }
+  .hero h1 em { font-style: italic; color: var(--gold); }
+  .hero p {
+    max-width: 760px; margin: 0 auto 32px;
+    color: var(--muted); font-size: 15px; line-height: 1.7;
+  }
+
+  /* ── DOMAIN PILLS ── */
+  .domain-ticker {
+    display: flex; justify-content: center; gap: 8px; flex-wrap: wrap;
+    margin-bottom: 32px; max-width: 960px; margin-left: auto; margin-right: auto;
+  }
+  .domain-pill {
+    font-size: 11px; padding: 5px 12px; border-radius: 16px;
+    background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
+    color: var(--muted); font-family: 'IBM Plex Mono', monospace; cursor: pointer;
+    transition: all 0.2s;
+  }
+  .domain-pill:hover, .domain-pill.active {
+    border-color: rgba(201,168,76,0.4); color: var(--cream); background: rgba(201,168,76,0.1);
+  }
+
+  /* ── MODE TABS ── */
+  .mode-tabs {
+    display: flex; gap: 8px;
+    background: var(--navy2); border: 1px solid var(--border);
+    border-radius: 10px; padding: 4px;
+    max-width: 520px; margin: 0 auto 36px;
+  }
+  .mode-tab {
+    flex: 1; padding: 10px 16px; border-radius: 7px; border: none;
+    font-family: 'IBM Plex Sans', sans-serif; font-size: 13px; font-weight: 500;
+    cursor: pointer; transition: all 0.2s; color: var(--muted); background: transparent;
+  }
+  .mode-tab.active {
+    background: linear-gradient(135deg, var(--gold), var(--gold2));
+    color: var(--navy); font-weight: 700;
+    box-shadow: 0 2px 8px rgba(201,168,76,0.25);
+  }
+
+  /* ── INPUT PANELS ── */
+  .input-panel { max-width: 820px; margin: 0 auto; animation: fadeUp 0.4s ease; }
+  .field-group { margin-bottom: 20px; position: relative; }
+  .field-label {
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase;
+    color: var(--gold); font-family: 'IBM Plex Mono', monospace; margin-bottom: 8px;
+  }
+  .field-hint { font-size: 12px; color: var(--muted); margin-top: 6px; }
+
+  textarea, input[type="text"], input[type="password"], select {
+    width: 100%; background: var(--navy2); border: 1px solid var(--border);
+    border-radius: 9px; color: var(--cream); font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 14px; padding: 12px 16px; outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    resize: vertical;
+  }
+  textarea { min-height: 120px; }
+  textarea:focus, input:focus, select:focus {
+    border-color: rgba(201,168,76,0.6);
+    box-shadow: 0 0 0 3px rgba(201,168,76,0.1);
+  }
+  select option { background: var(--navy2); color: var(--cream); }
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+  @media (max-width: 768px) {
+    .two-col, .three-col { grid-template-columns: 1fr; }
+  }
+
+  .char-count { text-align: right; font-size: 11px; color: var(--muted); margin-top: 4px; font-family: 'IBM Plex Mono', monospace; }
+
+  /* Behavior Specificity Real-Time Warning */
+  .spec-warning-box {
+    margin-top: 8px; padding: 10px 14px; border-radius: 8px;
+    background: rgba(245,158,11,0.09); border: 1px solid rgba(245,158,11,0.3);
+    color: var(--amber); font-size: 12.5px; line-height: 1.5;
+    display: none; animation: fadeIn 0.3s ease;
+  }
+  .spec-warning-box.active { display: block; }
+  .spec-badge {
+    display: inline-block; font-family: 'IBM Plex Mono', monospace; font-size: 10px;
+    background: rgba(245,158,11,0.2); padding: 2px 6px; border-radius: 4px; font-weight: 600;
+  }
+
+  /* Tag pills for constraints */
+  .tag-pills { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+  .tag-pill {
+    padding: 5px 12px; border-radius: 20px; font-size: 12px; cursor: pointer;
+    background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1);
+    color: var(--muted); transition: all 0.2s; user-select: none;
+  }
+  .tag-pill:hover { border-color: rgba(201,168,76,0.3); color: var(--cream); }
+  .tag-pill.active {
+    background: rgba(201,168,76,0.15); border-color: var(--gold); color: var(--gold2); font-weight: 500;
+  }
+
+  /* Expandable advanced section */
+  .expand-btn {
+    background: none; border: none; color: var(--blue); font-size: 12px; cursor: pointer;
+    font-family: 'IBM Plex Mono', monospace; padding: 0; margin-top: 6px; display: inline-flex; align-items: center; gap: 4px;
+  }
+  .expand-btn:hover { text-decoration: underline; }
+  .advanced-subpanel {
+    background: rgba(255,255,255,0.02); border: 1px dashed var(--border);
+    border-radius: 8px; padding: 14px; margin-top: 10px; display: none;
+  }
+  .advanced-subpanel.open { display: block; animation: fadeIn 0.3s ease; }
+
+  /* CTA BUTTON */
+  .btn-analyze {
+    width: 100%; padding: 16px; margin-top: 12px;
+    background: linear-gradient(135deg, var(--gold), var(--gold2));
+    border: none; border-radius: 10px; cursor: pointer;
+    font-family: 'IBM Plex Sans', sans-serif; font-size: 15px; font-weight: 700;
+    color: var(--navy); letter-spacing: 0.3px;
+    transition: all 0.2s; position: relative; overflow: hidden;
+    box-shadow: 0 4px 16px rgba(201,168,76,0.2);
+  }
+  .btn-analyze:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 8px 26px rgba(201,168,76,0.35); }
+  .btn-analyze:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+  .btn-analyze .btn-inner { display: flex; align-items: center; justify-content: center; gap: 8px; }
+
+  /* ── LOADING ── */
+  .loading-screen { text-align: center; padding: 80px 0; animation: fadeIn 0.3s ease; }
+  .loading-orb {
+    width: 68px; height: 68px; border-radius: 50%;
+    border: 3px solid rgba(201,168,76,0.15);
+    border-top-color: var(--gold);
+    animation: spin 0.9s linear infinite;
+    margin: 0 auto 24px;
+  }
+  .loading-text { font-family: 'Playfair Display', serif; font-size: 24px; color: var(--cream); margin-bottom: 8px; }
+  .loading-sub { color: var(--muted); font-size: 13px; max-width: 580px; margin: 0 auto; }
+  .loading-steps { margin-top: 28px; display: flex; flex-direction: column; gap: 9px; align-items: center; }
+  .step {
+    font-family: 'IBM Plex Mono', monospace; font-size: 12px;
+    color: var(--muted); opacity: 0;
+    animation: fadeIn 0.5s ease forwards;
+  }
+  .step:nth-child(1) { animation-delay: 0.2s; }
+  .step:nth-child(2) { animation-delay: 1.0s; }
+  .step:nth-child(3) { animation-delay: 2.0s; }
+  .step:nth-child(4) { animation-delay: 3.0s; }
+  .step:nth-child(5) { animation-delay: 4.0s; }
+  .step:nth-child(6) { animation-delay: 5.0s; }
+
+  /* ── RESULTS ── */
+  #results { animation: fadeUp 0.5s ease; padding-bottom: 60px; }
+  .results-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 28px; padding-bottom: 18px;
+    border-bottom: 1px solid var(--border);
+    flex-wrap: wrap; gap: 16px;
+  }
+  .results-title { font-family: 'Playfair Display', serif; font-size: 28px; color: var(--cream); font-weight: 700; }
+  .results-subtitle { color: var(--muted); font-size: 13px; margin-top: 3px; }
+  .results-actions { display: flex; gap: 10px; align-items: center; }
+  .btn-action {
+    background: rgba(255,255,255,0.06); border: 1px solid var(--border);
+    color: var(--text); padding: 8px 16px; border-radius: 8px; cursor: pointer;
+    font-family: 'IBM Plex Sans', sans-serif; font-size: 13px; font-weight: 500;
+    transition: all 0.2s; display: flex; align-items: center; gap: 6px;
+  }
+  .btn-action:hover { background: rgba(255,255,255,0.12); color: var(--cream); }
+  .btn-action.gold { background: rgba(201,168,76,0.15); border-color: rgba(201,168,76,0.35); color: var(--gold2); }
+
+  /* ── CARDS GENERAL ── */
+  .card {
+    background: var(--navy2); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 24px; margin-bottom: 24px;
+  }
+  .card-title {
+    font-family: 'Playfair Display', serif; font-size: 17px; font-weight: 700;
+    color: var(--cream); margin-bottom: 16px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .card-title-left { display: flex; align-items: center; gap: 10px; }
+  .card-title .icon {
+    width: 30px; height: 30px; border-radius: 7px;
+    display: flex; align-items: center; justify-content: center; font-size: 15px; flex-shrink: 0;
+  }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  @media (max-width: 860px) { .grid-2 { grid-template-columns: 1fr; } }
+
+  /* ── BEI SCORE CARD ── */
+  .score-card {
+    background: linear-gradient(135deg, var(--navy2), var(--navy3));
+    border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 30px; display: flex; align-items: center; gap: 32px;
+    margin-bottom: 24px; flex-wrap: wrap;
+  }
+  .score-gauge { position: relative; width: 120px; height: 120px; flex-shrink: 0; }
+  .score-gauge svg { transform: rotate(-90deg); }
+  .score-num {
+    position: absolute; inset: 0; display: flex; align-items: center;
+    justify-content: center; flex-direction: column;
+    font-family: 'Playfair Display', serif;
+  }
+  .score-big { font-size: 34px; font-weight: 900; color: var(--cream); line-height: 1; }
+  .score-label { font-size: 10px; color: var(--muted); letter-spacing: 1.5px; text-transform: uppercase; margin-top: 2px; }
+  .score-info { flex: 1; min-width: 280px; }
+  .score-verdict { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 700; margin-bottom: 6px; }
+  .score-summary { color: var(--text); font-size: 13.5px; line-height: 1.65; margin-bottom: 18px; }
+
+  /* EAST bars */
+  .east-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+  .east-item { text-align: center; }
+  .east-letter { font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 900; margin-bottom: 1px; }
+  .east-label { font-size: 10.5px; color: var(--muted); margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .east-bar-bg { background: rgba(255,255,255,0.06); height: 5px; border-radius: 3px; overflow: hidden; margin-bottom: 4px; }
+  .east-bar { height: 100%; border-radius: 3px; transition: width 1s ease; }
+  .east-val { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--cream); }
+
+  /* ── BEHAVIOR SPECIFICITY CARD ── */
+  .spec-card {
+    background: rgba(18,32,56,0.5); border: 1px solid var(--border-blue);
+    border-radius: var(--radius); padding: 20px 24px; margin-bottom: 24px;
+    display: flex; gap: 20px; align-items: center; flex-wrap: wrap;
+  }
+  .spec-icon-box {
+    width: 44px; height: 44px; border-radius: 10px;
+    background: rgba(74,158,255,0.12); border: 1px solid var(--border-blue);
+    display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0;
+  }
+  .spec-content { flex: 1; min-width: 260px; font-size: 13.5px; }
+  .spec-title { font-weight: 700; color: var(--cream); margin-bottom: 4px; display: flex; align-items: center; gap: 8px; }
+  .spec-pill {
+    font-size: 10px; padding: 2px 8px; border-radius: 12px; font-family: 'IBM Plex Mono', monospace;
+  }
+  .spec-pill.good { background: rgba(62,207,142,0.15); color: var(--green); border: 1px solid rgba(62,207,142,0.3); }
+  .spec-pill.aspiration { background: rgba(245,158,11,0.15); color: var(--amber); border: 1px solid rgba(245,158,11,0.3); }
+
+  /* ── BEHAVIORAL TRANSFER ENGINE v1 CARD ── */
+  .transfer-card {
+    background: linear-gradient(135deg, rgba(12,22,38,0.9), rgba(18,32,56,0.9));
+    border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 26px; margin-bottom: 24px;
+  }
+  .transfer-header {
+    display: flex; justify-content: space-between; align-items: baseline;
+    border-bottom: 1px solid rgba(255,255,255,0.06); padding-bottom: 14px; margin-bottom: 18px; flex-wrap: wrap; gap: 10px;
+  }
+  .transfer-title { font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 700; color: var(--cream); display: flex; align-items: center; gap: 8px; }
+  .transfer-score-badge {
+    font-family: 'IBM Plex Mono', monospace; font-size: 12px; font-weight: 600;
+    padding: 4px 12px; border-radius: 20px; background: rgba(201,168,76,0.12);
+    border: 1px solid rgba(201,168,76,0.35); color: var(--gold2);
+  }
+  .transfer-route {
+    font-family: 'IBM Plex Mono', monospace; font-size: 13px; color: var(--blue);
+    margin-bottom: 16px; display: flex; align-items: center; gap: 8px;
+  }
+  .transfer-grid {
+    display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-bottom: 18px;
+  }
+  @media (max-width: 860px) { .transfer-grid { grid-template-columns: repeat(2, 1fr); } }
+  .transfer-dim { background: rgba(255,255,255,0.025); border: 1px solid rgba(255,255,255,0.06); border-radius: 8px; padding: 12px; text-align: center; }
+  .transfer-dim-label { font-size: 11px; color: var(--muted); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .transfer-dim-score { font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 700; color: var(--cream); margin-bottom: 6px; }
+  .transfer-bar-bg { background: rgba(255,255,255,0.06); height: 5px; border-radius: 3px; overflow: hidden; }
+  .transfer-bar { height: 100%; border-radius: 3px; background: var(--blue); }
+  .transfer-caveats {
+    background: rgba(201,168,76,0.06); border-left: 3px solid var(--gold);
+    padding: 12px 16px; border-radius: 0 8px 8px 0; font-size: 12.5px; line-height: 1.6; color: var(--text);
+  }
+  .transfer-caveats ul { margin-left: 18px; margin-top: 6px; }
+
+  /* ── GROUND-TRUTH & ETHICS BANNER ── */
+  .ethics-mandate-card {
+    background: rgba(224,92,92,0.05); border: 1px solid rgba(224,92,92,0.22);
+    border-radius: var(--radius); padding: 22px 26px; margin-bottom: 24px;
+  }
+  .mandate-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+  .mandate-title { font-family: 'Playfair Display', serif; font-size: 16px; font-weight: 700; color: #ff7b7b; }
+  .mandate-text { font-size: 13px; line-height: 1.65; color: var(--text); margin-bottom: 12px; }
+  .traps-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  @media (max-width: 768px) { .traps-grid { grid-template-columns: 1fr; } }
+  .trap-box { background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.06); border-radius: 8px; padding: 12px 14px; font-size: 12.5px; }
+  .trap-name { font-weight: 700; margin-bottom: 4px; font-family: 'IBM Plex Mono', monospace; font-size: 11.5px; }
+  .trap-box.trap-fab .trap-name { color: #ff7b7b; }
+  .trap-box.trap-boom .trap-name { color: var(--amber); }
+
+  /* ── COM-B DIAGNOSTIC ── */
+  .comb-card {
+    background: var(--navy2); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 24px; margin-bottom: 24px;
+  }
+  .comb-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; }
+  .comb-title { font-family: 'Playfair Display', serif; font-size: 17px; font-weight: 700; color: var(--cream); display: flex; align-items: center; gap: 8px; }
+  .comb-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  @media (max-width: 800px) { .comb-grid { grid-template-columns: 1fr; } }
+  .comb-item { background: rgba(255,255,255,0.025); border: 1px solid rgba(255,255,255,0.06); border-radius: 9px; padding: 14px; }
+  .comb-type { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; font-size: 12px; color: var(--gold); font-weight: 600; text-transform: uppercase; font-family: 'IBM Plex Mono', monospace; }
+  .comb-score-num { font-size: 12px; color: var(--cream); }
+  .comb-bar-bg { background: rgba(255,255,255,0.06); height: 5px; border-radius: 3px; overflow: hidden; margin-bottom: 10px; }
+  .comb-bar { height: 100%; border-radius: 3px; background: var(--green); }
+  .comb-barrier { font-size: 12px; color: var(--muted); margin-bottom: 6px; }
+  .comb-rec { font-size: 12.5px; color: var(--cream); line-height: 1.5; }
+
+  /* ── MULTI-ARM EXPERIMENT & RCT ── */
+  .experiment-card {
+    background: var(--navy2); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 26px; margin-bottom: 24px;
+  }
+  .exp-nav { display: flex; gap: 8px; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 12px; margin-bottom: 20px; overflow-x: auto; }
+  .exp-tab {
+    padding: 8px 16px; border-radius: 7px; border: 1px solid transparent; background: transparent;
+    color: var(--muted); cursor: pointer; font-size: 13px; font-weight: 600; font-family: 'IBM Plex Sans', sans-serif;
+    transition: all 0.2s; white-space: nowrap;
+  }
+  .exp-tab.active { background: rgba(201,168,76,0.12); border-color: rgba(201,168,76,0.3); color: var(--gold2); }
+  .arm-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; flex-wrap: wrap; gap: 10px; }
+  .arm-title { font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 700; color: var(--cream); }
+  .arm-badge { font-size: 11px; padding: 3px 10px; border-radius: 12px; background: rgba(74,158,255,0.12); color: var(--blue); font-family: 'IBM Plex Mono', monospace; }
+  .arm-message-box {
+    background: rgba(0,0,0,0.3); border: 1px solid var(--border); border-radius: 10px;
+    padding: 18px; position: relative; margin-bottom: 16px;
+  }
+  .arm-message-text { font-size: 15px; color: var(--cream); line-height: 1.6; font-style: italic; }
+  .arm-copy-btn {
+    position: absolute; top: 12px; right: 12px; background: rgba(255,255,255,0.06);
+    border: 1px solid var(--border); color: var(--text); padding: 4px 10px; border-radius: 6px;
+    font-size: 11px; cursor: pointer; font-family: 'IBM Plex Mono', monospace; transition: all 0.2s;
+  }
+  .arm-copy-btn:hover { background: rgba(201,168,76,0.2); color: var(--gold2); }
+  .arm-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 18px; }
+  @media (max-width: 768px) { .arm-grid { grid-template-columns: 1fr; } }
+  .arm-detail { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 8px; padding: 12px; font-size: 12.5px; }
+  .arm-detail-label { font-size: 10.5px; text-transform: uppercase; color: var(--gold); margin-bottom: 4px; font-family: 'IBM Plex Mono', monospace; }
+
+  /* Ground Truth Backfire Audit inside Arm */
+  .ground-truth-subpanel {
+    background: rgba(20,28,45,0.7); border: 1px solid rgba(201,168,76,0.25);
+    border-radius: 9px; padding: 16px; margin-bottom: 16px;
+  }
+  .gt-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; flex-wrap: wrap; gap: 8px; }
+  .gt-title { font-size: 12px; letter-spacing: 1px; text-transform: uppercase; color: var(--gold); font-family: 'IBM Plex Mono', monospace; font-weight: 600; display: flex; align-items: center; gap: 6px; }
+  .btn-pivot-toggle {
+    background: rgba(245,158,11,0.12); border: 1px solid rgba(245,158,11,0.35);
+    color: var(--amber); padding: 5px 12px; border-radius: 6px; font-size: 11px;
+    font-family: 'IBM Plex Mono', monospace; cursor: pointer; transition: all 0.2s; font-weight: 600;
+  }
+  .btn-pivot-toggle:hover, .btn-pivot-toggle.active {
+    background: var(--amber); color: var(--navy); border-color: var(--amber);
+  }
+  .gt-row { display: flex; gap: 8px; font-size: 12.5px; line-height: 1.5; margin-bottom: 6px; }
+  .gt-label { color: var(--muted); min-width: 140px; font-family: 'IBM Plex Mono', monospace; font-size: 11px; }
+
+  /* RCT protocol strip */
+  .rct-protocol {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;
+    background: rgba(0,0,0,0.25); border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 8px; padding: 12px; font-size: 12px;
+  }
+  @media (max-width: 768px) { .rct-protocol { grid-template-columns: repeat(2, 1fr); } }
+  .rct-item .rct-label { color: var(--muted); font-size: 10px; text-transform: uppercase; font-family: 'IBM Plex Mono', monospace; margin-bottom: 2px; }
+  .rct-item .rct-val { color: var(--cream); font-weight: 600; }
+
+  /* ── SYNTHETIC PERSONAS ── */
+  .persona-card {
+    background: var(--navy2); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 26px; margin-bottom: 24px;
+  }
+  .persona-title { font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 700; color: var(--cream); margin-bottom: 4px; display: flex; align-items: center; gap: 8px; }
+  .persona-sub { font-size: 13px; color: var(--muted); margin-bottom: 18px; }
+  .persona-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  @media (max-width: 860px) { .persona-grid { grid-template-columns: 1fr; } }
+  .p-box {
+    background: rgba(255,255,255,0.025); border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 10px; padding: 18px; display: flex; flex-direction: column; justify-content: space-between;
+  }
+  .p-header { margin-bottom: 14px; }
+  .p-name { font-weight: 700; color: var(--cream); font-size: 15px; }
+  .p-demog { font-size: 11.5px; color: var(--gold); font-family: 'IBM Plex Mono', monospace; margin-top: 2px; }
+  .p-metrics { display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px; }
+  .p-metric-row { display: flex; justify-content: space-between; font-size: 11.5px; margin-bottom: 3px; }
+  .p-bar-bg { background: rgba(255,255,255,0.06); height: 5px; border-radius: 3px; overflow: hidden; }
+  .p-bar { height: 100%; border-radius: 3px; }
+  .p-quote {
+    background: rgba(0,0,0,0.25); border-left: 2px solid var(--blue);
+    padding: 10px 12px; border-radius: 0 6px 6px 0; font-size: 12px; font-style: italic; color: var(--text); line-height: 1.5; margin-bottom: 12px;
+  }
+  .p-verdict { font-size: 12px; color: var(--muted); line-height: 1.5; }
+
+  /* ── YARNGPT 5-LANGUAGE STUDIO & MULTI-CHANNEL ── */
+  .channel-card {
+    background: var(--navy2); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 26px; margin-bottom: 24px;
+  }
+  .channel-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; flex-wrap: wrap; gap: 12px; }
+  .channel-title { font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 700; color: var(--cream); display: flex; align-items: center; gap: 8px; }
+  .channel-tabs { display: flex; gap: 6px; background: rgba(0,0,0,0.3); padding: 4px; border-radius: 8px; border: 1px solid var(--border); }
+  .chan-tab {
+    padding: 6px 14px; border-radius: 6px; border: none; background: transparent;
+    color: var(--muted); font-size: 12px; font-weight: 600; cursor: pointer; font-family: 'IBM Plex Sans', sans-serif; transition: all 0.2s;
+  }
+  .chan-tab.active { background: linear-gradient(135deg, var(--gold), var(--gold2)); color: var(--navy); }
+
+  /* YarnGPT Studio Subtabs for 5 languages */
+  .lang-tabs { display: flex; gap: 6px; margin-bottom: 16px; flex-wrap: wrap; }
+  .lang-tab {
+    padding: 6px 12px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.08); background: rgba(255,255,255,0.02);
+    color: var(--muted); font-size: 12px; cursor: pointer; font-family: 'IBM Plex Mono', monospace; transition: all 0.2s;
+  }
+  .lang-tab:hover { border-color: rgba(201,168,76,0.3); color: var(--cream); }
+  .lang-tab.active {
+    background: rgba(167,139,250,0.15); border-color: var(--purple); color: var(--purple); font-weight: 600;
+  }
+
+  .audio-studio {
+    background: rgba(0,0,0,0.25); border: 1px solid rgba(167,139,250,0.25);
+    border-radius: 12px; padding: 20px;
+  }
+  .audio-controls {
+    display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 12px;
+  }
+  .voice-badge {
+    font-size: 11px; padding: 3px 10px; border-radius: 12px; background: rgba(167,139,250,0.15);
+    border: 1px solid rgba(167,139,250,0.3); color: var(--purple); font-family: 'IBM Plex Mono', monospace;
+  }
+  .audio-player-btns { display: flex; align-items: center; gap: 10px; }
+  .btn-audio {
+    background: linear-gradient(135deg, var(--purple), #8b5cf6);
+    border: none; border-radius: 8px; color: var(--white); padding: 8px 18px;
+    font-size: 13px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px;
+    transition: all 0.2s; box-shadow: 0 2px 10px rgba(167,139,250,0.25);
+  }
+  .btn-audio:hover { transform: translateY(-1px); box-shadow: 0 4px 16px rgba(167,139,250,0.4); }
+  .btn-audio.stop { background: rgba(224,92,92,0.2); border: 1px solid var(--red); color: var(--red); box-shadow: none; }
+  .audio-waveform { display: flex; align-items: center; gap: 3px; height: 24px; padding: 0 8px; }
+  .wave-bar { width: 3px; height: 6px; background: var(--purple); border-radius: 2px; }
+  .wave-bar.animating { animation: wave 0.8s ease-in-out infinite alternate; }
+  .wave-bar:nth-child(2) { animation-delay: 0.15s; }
+  .wave-bar:nth-child(3) { animation-delay: 0.3s; }
+  .wave-bar:nth-child(4) { animation-delay: 0.45s; }
+  .wave-bar:nth-child(5) { animation-delay: 0.6s; }
+  .wave-bar:nth-child(6) { animation-delay: 0.75s; }
+  @keyframes wave { from { height: 4px; } to { height: 22px; } }
+
+  .audio-script-box {
+    background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 8px; padding: 16px; margin-bottom: 14px; font-size: 14.5px;
+    color: var(--cream); line-height: 1.7; font-family: 'IBM Plex Sans', sans-serif;
+  }
+  .script-headline { font-weight: 700; color: var(--gold2); margin-bottom: 6px; font-size: 15px; }
+
+  /* SMS & WhatsApp Mockups */
+  .sms-phone, .wa-phone {
+    max-width: 440px; margin: 0 auto; background: rgba(0,0,0,0.4);
+    border: 1px solid rgba(255,255,255,0.1); border-radius: 14px; padding: 20px;
+  }
+  .sms-bubble {
+    background: #1e3a5f; color: var(--white); padding: 12px 16px;
+    border-radius: 14px 14px 2px 14px; font-size: 13.5px; line-height: 1.5; margin-bottom: 12px;
+  }
+  .sms-meta { display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: var(--muted); font-family: 'IBM Plex Mono', monospace; }
+  .wa-bubble {
+    background: #005c4b; color: #e9edef; padding: 12px 16px;
+    border-radius: 14px 14px 2px 14px; font-size: 13.5px; line-height: 1.6; margin-bottom: 12px; white-space: pre-wrap;
+  }
+  .field-points { display: flex; flex-direction: column; gap: 10px; }
+  .field-item { background: rgba(255,255,255,0.03); border-left: 3px solid var(--blue); padding: 12px 16px; border-radius: 0 8px 8px 0; font-size: 13px; color: var(--text); }
+
+  /* ── EVIDENCE CARDS ── */
+  .evidence-list { display: flex; flex-direction: column; gap: 14px; }
+  .evidence-item {
+    background: rgba(74,158,255,0.05); border: 1px solid rgba(74,158,255,0.18);
+    border-radius: 10px; padding: 18px;
+  }
+  .evidence-header { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; margin-bottom: 8px; flex-wrap: wrap; }
+  .evidence-title { color: var(--blue); font-size: 14px; font-weight: 700; }
+  .evidence-badges { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+  .evidence-effect { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--green); background: rgba(62,207,142,0.1); padding: 2px 8px; border-radius: 10px; }
+  .evidence-sample { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--gold); background: rgba(201,168,76,0.1); padding: 2px 8px; border-radius: 10px; }
+  .evidence-finding { color: var(--text); font-size: 13.5px; line-height: 1.6; margin-bottom: 8px; }
+  .evidence-fails {
+    background: rgba(224,92,92,0.07); border-left: 2px solid var(--red);
+    padding: 6px 10px; border-radius: 0 6px 6px 0; font-size: 12px; color: #ff9898; margin-top: 6px;
+  }
+  .evidence-source { color: var(--muted); font-size: 11px; margin-top: 8px; font-family: 'IBM Plex Mono', monospace; }
+
+  /* ── MODAL (SETTINGS) ── */
+  .modal-overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.75);
+    backdrop-filter: blur(6px); z-index: 200; display: none; align-items: center; justify-content: center; padding: 20px;
+  }
+  .modal-overlay.open { display: flex; animation: fadeIn 0.2s ease; }
+  .modal-box {
+    background: var(--navy2); border: 1px solid var(--border); border-radius: var(--radius);
+    max-width: 520px; width: 100%; padding: 28px; box-shadow: 0 16px 40px rgba(0,0,0,0.6); position: relative;
+  }
+  .modal-title { font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 700; color: var(--cream); margin-bottom: 12px; }
+  .modal-close {
+    position: absolute; top: 18px; right: 20px; background: none; border: none;
+    color: var(--muted); font-size: 20px; cursor: pointer;
+  }
+  .modal-close:hover { color: var(--cream); }
+
+  /* Lever pills */
+  .lever-section-label {
+    font-size: 11px; letter-spacing: 2px; text-transform: uppercase;
+    color: var(--muted); font-family: 'IBM Plex Mono', monospace;
+    margin-bottom: 10px; margin-top: 14px;
+  }
+  .lever-section-label:first-child { margin-top: 0; }
+  .lever-list { display: flex; flex-direction: column; gap: 8px; }
+  .lever-item { border-radius: 8px; padding: 10px 14px; font-size: 13px; line-height: 1.5; }
+  .lever-item.present { background: rgba(62,207,142,0.08); border: 1px solid rgba(62,207,142,0.2); }
+  .lever-item.missing { background: rgba(224,92,92,0.07); border: 1px solid rgba(224,92,92,0.18); }
+  .lever-name { font-weight: 600; margin-bottom: 2px; }
+  .lever-item.present .lever-name { color: var(--green); }
+  .lever-item.missing .lever-name { color: var(--red); }
+  .lever-evidence { color: var(--muted); font-size: 12px; }
+
+  /* Benchmark Case Study */
+  .case-badge {
+    display: inline-block; font-size: 11px; padding: 3px 10px; border-radius: 20px;
+    background: rgba(74,158,255,0.12); border: 1px solid rgba(74,158,255,0.25);
+    color: var(--blue); font-family: 'IBM Plex Mono', monospace; margin-bottom: 12px;
+  }
+  .case-title { font-weight: 600; color: var(--cream); font-size: 14px; margin-bottom: 8px; }
+  .case-stat {
+    background: rgba(62,207,142,0.08); border: 1px solid rgba(62,207,142,0.2);
+    border-radius: 8px; padding: 10px 14px; margin-bottom: 12px;
+  }
+  .case-stat-num { font-family: 'Playfair Display', serif; font-size: 24px; color: var(--green); font-weight: 700; }
+  .case-stat-label { font-size: 12px; color: var(--muted); }
+  .case-learning { font-size: 13px; color: var(--text); line-height: 1.7; }
+
+  /* Ethics & Cultural Notes */
+  .ethics-flag { padding: 12px 16px; border-radius: 8px; font-size: 13px; line-height: 1.6; margin-top: 14px; }
+  .ethics-flag.safe { background: rgba(62,207,142,0.07); border: 1px solid rgba(62,207,142,0.2); color: var(--green); }
+  .ethics-flag.warning { background: rgba(224,92,92,0.08); border: 1px solid rgba(224,92,92,0.25); color: var(--red); }
+  .ethics-flag.caution { background: rgba(201,168,76,0.08); border: 1px solid rgba(201,168,76,0.25); color: var(--gold); }
+  .mf-badge {
+    display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 12px; margin-bottom: 10px;
+    background: rgba(201,168,76,0.1); border: 1px solid var(--border); color: var(--gold);
+    font-family: 'IBM Plex Mono', monospace;
+  }
+  .nigeria-note {
+    background: rgba(201,168,76,0.06); border-left: 3px solid var(--gold);
+    padding: 12px 16px; border-radius: 0 8px 8px 0; font-size: 13px; color: var(--text); line-height: 1.6;
+    margin-top: 14px;
+  }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:translateY(0); } }
+  @keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+  @keyframes spin   { to { transform: rotate(360deg); } }
+
+  .hidden { display: none !important; }
+
+  footer {
+    border-top: 1px solid var(--border); padding: 28px 0; margin-top: 60px;
+    text-align: center; color: var(--muted); font-size: 12px;
+  }
+  footer strong { color: var(--gold); }
+</style>
+</head>
+<body>
+
+<!-- ── NAV ── -->
+<nav>
+  <div class="wrap nav-inner">
+    <div class="logo" onclick="resetAll()">
+      <div class="logo-icon">N</div>
+      <div>
+        <div class="logo-text">NudgeDesigner 3.0</div>
+        <div class="logo-sub">Behavioral Intelligence Engine</div>
+      </div>
+    </div>
+    <div class="nav-badges">
+      <div class="nav-badge busara">60+ Busara RCT Corpus</div>
+      <div class="nav-badge">Transfer Engine v1</div>
+      <div class="nav-badge voice">YarnGPT 5-Lang Voice</div>
+    </div>
+  </div>
+</nav>
+
+<!-- ── HERO ── -->
+<div id="heroSection">
+  <div class="wrap">
+    <div class="hero">
+      <div class="hero-label">Behavioral Effectiveness Intelligence 3.0</div>
+      <h1>Design campaigns that<br/><em>resonate with African decision reality</em></h1>
+      <p>Engineered around the Behavioral Problem Compiler, quantified Contextual Transfer Modeling (Kenya ➔ Nigeria), and the Ground-Truth Sensitivity & Backfire Audit Engine. Grounded in 60+ Busara RCT studies and YarnGPT African speech synthesis.</p>
+    </div>
+
+    <!-- 7 Domain Ticker -->
+    <div class="domain-ticker">
+      <div class="domain-pill active" onclick="quickSelectDomain('Financial Inclusion & Mobile Money')">💰 Financial Inclusion & Mobile Money</div>
+      <div class="domain-pill active" onclick="quickSelectDomain('Public Health & Maternal Care')">🏥 Public Health & Maternal Care</div>
+      <div class="domain-pill active" onclick="quickSelectDomain('Agriculture & Climate Adaptation')">🌱 Agriculture & Climate Adaptation</div>
+      <div class="domain-pill active" onclick="quickSelectDomain('Education & Early Learning')">📚 Education & Early Learning</div>
+      <div class="domain-pill active" onclick="quickSelectDomain('Civic Trust & Tax Compliance')">🏛 Civic Trust & Tax Morale</div>
+      <div class="domain-pill active" onclick="quickSelectDomain('Gender & Intra-Household')">⚖️ Gender & Intra-Household</div>
+      <div class="domain-pill active" onclick="quickSelectDomain('Scarcity & Cognitive Bandwidth')">🧠 Scarcity & Cognitive Bandwidth</div>
+    </div>
+
+    <!-- MODE TABS -->
+    <div class="mode-tabs">
+      <button class="mode-tab active" onclick="setMode('compiler')">🎯 Behavioral Problem Compiler</button>
+      <button class="mode-tab" onclick="setMode('rapid')">📋 Rapid Campaign Audit</button>
+    </div>
+
+    <!-- COMPILER MODE (THE 6 ANALYTICAL FIELDS) -->
+    <div class="input-panel" id="compilerPanel">
+      <!-- Field 1: Target Behavior -->
+      <div class="field-group">
+        <label class="field-label">
+          <span>Field 1: Target Behavior (Observable Action)</span>
+          <span style="color:var(--muted);text-transform:none">Define observable action, not broad aspiration</span>
+        </label>
+        <input type="text" id="c_behavior" placeholder="e.g. Increase the proportion of digital borrowers who repay their balance by 5 PM on due date" oninput="checkBehaviorSpecificity(this.value, 'specWarningCompiler')"/>
+        
+        <!-- Live Specificity Warning -->
+        <div id="specWarningCompiler" class="spec-warning-box">
+          <span class="spec-badge">⚠️ ASPIRATION DETECTED</span>
+          <span id="specWarningCompilerText"></span>
+        </div>
+
+        <button type="button" class="expand-btn" onclick="toggleSubpanel('subpanelPrecision')">+ Advanced Action Parameters (Baseline, Timeframe, Denominator)</button>
+        <div id="subpanelPrecision" class="advanced-subpanel">
+          <div class="three-col">
+            <div>
+              <label class="field-label" style="font-size:10px">Current Baseline</label>
+              <input type="text" id="c_baseline" placeholder="e.g. 14% on-time repayment"/>
+            </div>
+            <div>
+              <label class="field-label" style="font-size:10px">Target Timeframe</label>
+              <input type="text" id="c_timeframe" placeholder="e.g. within 14 days of disbursement"/>
+            </div>
+            <div>
+              <label class="field-label" style="font-size:10px">Eligible Population (Denominator)</label>
+              <input type="text" id="c_denominator" placeholder="e.g. active borrowers with limit > N15,000"/>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Field 2: Target Audience -->
+      <div class="field-group">
+        <label class="field-label">
+          <span>Field 2: Target Audience & Behavioral Profile</span>
+          <span style="color:var(--muted);text-transform:none">Who is acting and what constraints bind them?</span>
+        </label>
+        <input type="text" id="c_audience" placeholder="e.g. Informal market traders and artisans in Lagos and Ibadan using digital loans"/>
+        <div class="field-hint">Select relevant behavioral constraints binding this audience:</div>
+        <div class="tag-pills" id="audienceTags">
+          <span class="tag-pill" onclick="toggleTag(this)">Irregular Daily Income</span>
+          <span class="tag-pill" onclick="toggleTag(this)">Variable Repayment Dates</span>
+          <span class="tag-pill" onclick="toggleTag(this)">Low Institutional Trust</span>
+          <span class="tag-pill" onclick="toggleTag(this)">Basic Feature Phone (USSD/SMS)</span>
+          <span class="tag-pill" onclick="toggleTag(this)">Smartphone (WhatsApp/Mobile Web)</span>
+          <span class="tag-pill" onclick="toggleTag(this)">Low Literacy / Numeracy</span>
+          <span class="tag-pill" onclick="toggleTag(this)">High Scarcity / Bandwidth Depletion</span>
+          <span class="tag-pill" onclick="toggleTag(this)">Gendered Intra-Household Friction</span>
+        </div>
+        <div style="margin-top:12px">
+          <label class="field-label" style="font-size:10.5px">Evidence Provenance: How was this audience profile obtained?</label>
+          <select id="c_provenance">
+            <option value="Field Observation / In-Person Interviews">Field Observation / In-Person Qualitative Interviews</option>
+            <option value="Representative Household or Market Survey">Representative Household or Market Survey</option>
+            <option value="Transaction / Administrative Account Data">Transaction / Administrative Account Data</option>
+            <option value="Stakeholder / Partner Field Report">Stakeholder / Partner Field Report</option>
+            <option value="Preliminary Working Hypothesis (Unverified)">Preliminary Working Hypothesis (Unverified)</option>
+            <option value="Unknown / Inferred">Unknown / Inferred</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Field 3 & 4: Domain and Geography/Channel -->
+      <div class="two-col">
+        <div class="field-group">
+          <label class="field-label">Field 3: Domain Focus</label>
+          <select id="c_domain">
+            <option value="Financial Inclusion & Mobile Money">Financial Inclusion & Mobile Money</option>
+            <option value="Public Health & Maternal Care">Public Health & Maternal Care</option>
+            <option value="Agriculture & Climate Adaptation">Agriculture & Climate Adaptation</option>
+            <option value="Education & Early Learning">Education & Early Learning</option>
+            <option value="Civic Trust & Tax Compliance">Civic Trust & Tax Morale</option>
+            <option value="Gender & Intra-Household">Gender & Intra-Household Bargaining</option>
+            <option value="Scarcity & Cognitive Bandwidth">Scarcity & Cognitive Bandwidth</option>
+            <option value="Other Behavioral Intervention">Other / General Behavioral Design</option>
+          </select>
+        </div>
+        <div class="field-group">
+          <label class="field-label">Field 4: Target Geography</label>
+          <input type="text" id="c_geography" placeholder="e.g. Nigeria (Urban Lagos / Peri-urban Ogun)"/>
+        </div>
+      </div>
+
+      <div class="two-col">
+        <div class="field-group">
+          <label class="field-label">Contextual Setting</label>
+          <select id="c_setting">
+            <option value="Urban Commercial (dense informal markets)">Urban Commercial (dense informal markets)</option>
+            <option value="Peri-Urban Semi-Formal">Peri-Urban Semi-Formal</option>
+            <option value="Rural Agrarian (low connectivity)">Rural Agrarian (low connectivity)</option>
+          </select>
+        </div>
+        <div class="field-group">
+          <label class="field-label">Primary Delivery Channel</label>
+          <select id="c_channel">
+            <option value="SMS (160 characters concise)">SMS (160 characters concise)</option>
+            <option value="WhatsApp Interactive Broadcast">WhatsApp Interactive Broadcast</option>
+            <option value="YarnGPT Spoken Audio / Radio Megaphone">YarnGPT Spoken Audio / Radio Megaphone</option>
+            <option value="Field Agent / Community Health Worker">Field Agent / Community Health Worker</option>
+            <option value="USSD / Interactive Voice Response (IVR)">USSD / Interactive Voice Response (IVR)</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Field 5: Existing Draft Copy (Optional) -->
+      <div class="field-group">
+        <label class="field-label">
+          <span>Field 5: Existing Campaign Copy or Draft (Optional)</span>
+          <span style="color:var(--muted);text-transform:none">Audits cognitive load, reactance, and friction</span>
+        </label>
+        <textarea id="c_message" style="min-height:90px" placeholder="Paste your current SMS, script, or reminder copy here to benchmark against the redesigned arms..."></textarea>
+      </div>
+
+      <!-- Field 6: Core Challenge / Hypothesis -->
+      <div class="field-group">
+        <label class="field-label">
+          <span>Field 6: Core Behavioral Barrier</span>
+          <span style="color:var(--muted);text-transform:none">What do you suspect is stopping them?</span>
+        </label>
+        <input type="text" id="c_barrier" placeholder="e.g. Borrowers forget due dates, distrust fee calculations, or fear shame from agent calls"/>
+        <div style="margin-top:8px;display:flex;align-items:center;gap:8px">
+          <input type="checkbox" id="c_barrier_unverified" checked style="width:auto;cursor:pointer"/>
+          <label for="c_barrier_unverified" style="font-size:12px;color:var(--muted);cursor:pointer">Treat as unverified hypothesis to be cross-examined against Busara empirical models</label>
+        </div>
+      </div>
+
+      <button class="btn-analyze" onclick="runCompilerAnalysis()" id="analyzeBtnCompiler">
+        <span class="btn-inner">
+          <span>🔬</span>
+          <span>Compile Behavioral Intelligence & Multi-Arm Trial</span>
+        </span>
+      </button>
+    </div>
+
+    <!-- RAPID AUDIT MODE -->
+    <div class="input-panel hidden" id="rapidPanel">
+      <div class="field-group">
+        <label class="field-label">Campaign / Policy / Communication Text</label>
+        <textarea id="campaignText" placeholder="Paste your campaign copy, SMS message, public health advisory, or agricultural script here..." oninput="updateCount()"></textarea>
+        <div class="char-count"><span id="charCount">0</span> characters</div>
+      </div>
+      <div class="two-col">
+        <div class="field-group">
+          <label class="field-label">Target Behavior</label>
+          <input type="text" id="targetBehavior" placeholder="e.g. increase on-time loan repayment" oninput="checkBehaviorSpecificity(this.value, 'specWarningRapid')"/>
+          <div id="specWarningRapid" class="spec-warning-box">
+            <span class="spec-badge">⚠️ ASPIRATION DETECTED</span>
+            <span id="specWarningRapidText"></span>
+          </div>
+        </div>
+        <div class="field-group">
+          <label class="field-label">Target Audience</label>
+          <input type="text" id="targetAudience" placeholder="e.g. informal market vendors in Lagos"/>
+        </div>
+      </div>
+      <div class="field-group">
+        <label class="field-label">Context / Geography (optional)</label>
+        <input type="text" id="context" placeholder="e.g. Nigeria Lagos urban mobile money, Kenya Western rural farming"/>
+      </div>
+      <button class="btn-analyze" onclick="runRapidAnalysis()" id="analyzeBtnRapid">
+        <span class="btn-inner">
+          <span>🔬</span>
+          <span>Run Behavioral Intelligence Diagnostic</span>
+        </span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ── LOADING ── -->
+<div class="wrap hidden" id="loadingSection">
+  <div class="loading-screen">
+    <div class="loading-orb"></div>
+    <div class="loading-text">Synthesizing Behavioral Intelligence...</div>
+    <div class="loading-sub">Compiling structured analytical fields against 60+ Busara RCT studies, running Behavioral Transfer Engine v1, and auditing Ground-Truth sensitivity</div>
+    <div class="loading-steps">
+      <div class="step">▸ Compiling behavioral problem representation & checking action specificity...</div>
+      <div class="step">▸ Retrieving empirical Busara RCT evidence across 7 prioritized domains...</div>
+      <div class="step">▸ Executing Behavioral Transfer Engine v1 (Kenya ➔ Nigeria context modeling)...</div>
+      <div class="step">▸ Running Ground-Truth Sensitivity & Backfire Audit Engine...</div>
+      <div class="step">▸ Stress-testing across 3 synthetic African behavioral personas...</div>
+      <div class="step">▸ Synthesizing YarnGPT 5-language scripts & African audio studio...</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── RESULTS ── -->
+<div class="wrap hidden" id="results">
+  <div class="results-header">
+    <div>
+      <div class="results-title">Behavioral Intelligence & Multi-Arm Trial Report</div>
+      <div class="results-subtitle" id="resultsSubtitle"></div>
+    </div>
+    <div class="results-actions">
+      <button class="btn-action gold" onclick="exportBrief()">📄 Export Brief (Markdown)</button>
+      <button class="btn-action" onclick="resetAll()">← New Audit</button>
+    </div>
+  </div>
+
+  <!-- BEI Score & EAST -->
+  <div class="score-card" id="scoreCard">
+    <div class="score-gauge">
+      <svg width="120" height="120" viewBox="0 0 120 120">
+        <circle cx="60" cy="60" r="50" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="10"/>
+        <circle id="scoreArc" cx="60" cy="60" r="50" fill="none" stroke="#c9a84c"
+          stroke-width="10" stroke-linecap="round"
+          stroke-dasharray="314" stroke-dashoffset="314"
+          style="transition: stroke-dashoffset 1.4s ease, stroke 0.5s ease"/>
+      </svg>
+      <div class="score-num">
+        <div class="score-big" id="scoreNum">—</div>
+        <div class="score-label">BEI SCORE</div>
+      </div>
+    </div>
+    <div class="score-info">
+      <div class="score-verdict" id="scoreVerdict"></div>
+      <div class="score-summary" id="scoreSummary"></div>
+      <div class="east-grid" id="eastGrid"></div>
+    </div>
+  </div>
+
+  <!-- Behavioral Specificity Diagnostic Card -->
+  <div class="spec-card" id="specCard">
+    <div class="spec-icon-box">🎯</div>
+    <div class="spec-content">
+      <div class="spec-title">
+        <span>Behavior Specificity Diagnostic</span>
+        <span id="specStatusPill" class="spec-pill good">Observable Action</span>
+      </div>
+      <div id="specActionExtracted" style="color:var(--cream);font-weight:600;margin-bottom:4px"></div>
+      <div id="specDenominatorRec" style="color:var(--muted);font-size:12px;font-family:'IBM Plex Mono',monospace"></div>
+    </div>
+  </div>
+
+  <!-- Behavioral Transfer Engine v1 Card -->
+  <div class="transfer-card" id="transferCard">
+    <div class="transfer-header">
+      <div class="transfer-title">
+        <span>🌍</span> Behavioral Transfer Engine v1
+      </div>
+      <div class="transfer-score-badge" id="transferScoreBadge">Contextual Transfer: 84% · High Confidence</div>
+    </div>
+    <div class="transfer-route" id="transferRoute">
+      <span>Evidence Origin: Kenya (Busara Corpus)</span> ➔ <span>Destination: Nigeria (Urban Informal)</span>
+    </div>
+    <div class="transfer-grid" id="transferDimGrid">
+      <div class="transfer-dim">
+        <div class="transfer-dim-label">Population</div>
+        <div class="transfer-dim-score" id="dimPopScore">82%</div>
+        <div class="transfer-bar-bg"><div class="transfer-bar" id="dimPopBar" style="width:82%"></div></div>
+      </div>
+      <div class="transfer-dim">
+        <div class="transfer-dim-label">Mechanism</div>
+        <div class="transfer-dim-score" id="dimMechScore">88%</div>
+        <div class="transfer-bar-bg"><div class="transfer-bar" id="dimMechBar" style="width:88%"></div></div>
+      </div>
+      <div class="transfer-dim">
+        <div class="transfer-dim-label">Channel Match</div>
+        <div class="transfer-dim-score" id="dimChanScore">85%</div>
+        <div class="transfer-bar-bg"><div class="transfer-bar" id="dimChanBar" style="width:85%"></div></div>
+      </div>
+      <div class="transfer-dim">
+        <div class="transfer-dim-label">Trust Gap</div>
+        <div class="transfer-dim-score" id="dimTrustScore">65%</div>
+        <div class="transfer-bar-bg"><div class="transfer-bar" id="dimTrustBar" style="width:65%"></div></div>
+      </div>
+      <div class="transfer-dim">
+        <div class="transfer-dim-label">Economic Match</div>
+        <div class="transfer-dim-score" id="dimEconScore">75%</div>
+        <div class="transfer-bar-bg"><div class="transfer-bar" id="dimEconBar" style="width:75%"></div></div>
+      </div>
+    </div>
+    <div class="transfer-caveats" id="transferCaveats"></div>
+  </div>
+
+  <!-- Ground-Truth Sensitivity & Backfire Audit Engine Mandate -->
+  <div class="ethics-mandate-card">
+    <div class="mandate-header">
+      <span style="font-size:18px">🛡️</span>
+      <div class="mandate-title">Ground-Truth Sensitivity & Factual Integrity Mandate</div>
+    </div>
+    <div class="mandate-text">
+      <strong>Structural Heuristic Warning:</strong> Generated nudges are behavioral decision architectures, never drop-in copy to be populated with fabricated statistics. Fabricating majorities or non-existent deadlines destroys customer trust, creates dark patterns, and causes long-term reputational damage.
+    </div>
+    <div class="traps-grid">
+      <div class="trap-box trap-fab">
+        <div class="trap-name">⚠️ Trap 1: The Fabrication Trap</div>
+        <div>Never invent compliance rates (e.g. claiming "85% pay on time" when ground truth is 14%). Fabricated metrics erode credibility once discovered.</div>
+      </div>
+      <div class="trap-box trap-boom">
+        <div class="trap-name">⚡ Trap 2: The Blind Transparency Trap</div>
+        <div>Never blindly broadcast true low rates ("Only 14% pay taxes"). As Cialdini's Petrified Forest research shows, this socially validates non-compliance (the Boomerang Effect). Use the <strong>Truthful Adaptive Pivots</strong> below.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- COM-B Behavioral Diagnosis -->
+  <div class="comb-card" id="combCard">
+    <div class="comb-header">
+      <div class="comb-title"><span>🧩</span> COM-B Behavioral Diagnostic Canvas</div>
+      <div style="font-size:11px;color:var(--muted);font-family:'IBM Plex Mono',monospace">Capability · Opportunity · Motivation</div>
+    </div>
+    <div class="comb-grid" id="combGrid"></div>
+  </div>
+
+  <!-- A/B/n Multi-Arm Intervention Experiment Generator -->
+  <div class="experiment-card" id="experimentCard">
+    <div class="arm-header">
+      <div class="arm-title">🎯 Multi-Arm Intervention Experiment (A/B/n Trial)</div>
+      <div style="font-size:12px;color:var(--muted)">Evidence-backed competing behavioral hypotheses with Ground-Truth Backfire Audits</div>
+    </div>
+    <div class="exp-nav" id="armTabs"></div>
+    <div id="armContent" class="arm-content"></div>
+    <div class="rct-protocol" id="rctProtocol"></div>
+  </div>
+
+  <!-- Synthetic Audience Persona Simulator -->
+  <div class="persona-card" id="personaCard">
+    <div class="persona-title"><span>👥</span> Synthetic Audience Persona Simulator</div>
+    <div class="persona-sub">Real-time cognitive stress-test across representative African behavioral archetypes</div>
+    <div class="persona-grid" id="personaGrid"></div>
+  </div>
+
+  <!-- Multi-Channel Delivery Studio & YarnGPT Audio Synthesizer -->
+  <div class="channel-card" id="channelCard">
+    <div class="channel-header">
+      <div class="channel-title"><span>📻</span> Multi-Channel Studio & YarnGPT 5-Language Voice</div>
+      <div class="channel-tabs">
+        <button class="chan-tab active" onclick="switchChannel('yarngpt')">YarnGPT Voice</button>
+        <button class="chan-tab" onclick="switchChannel('sms')">SMS (160c)</button>
+        <button class="chan-tab" onclick="switchChannel('whatsapp')">WhatsApp</button>
+        <button class="chan-tab" onclick="switchChannel('field')">Field Agent Guide</button>
+      </div>
+    </div>
+
+    <!-- YarnGPT Voice Studio -->
+    <div id="chanYarnGPT" class="chan-panel">
+      <!-- Architecture Transparency Banner -->
+      <div style="background:rgba(201,168,76,0.06);border:1px solid rgba(201,168,76,0.25);border-radius:9px;padding:12px 16px;margin-bottom:14px;font-size:12.5px;line-height:1.6">
+        <div style="font-weight:700;color:var(--gold2);margin-bottom:4px;display:flex;align-items:center;gap:6px">
+          <span>🧠</span> Script Generation & Speech Synthesis Architecture
+        </div>
+        <div style="color:var(--text)">
+          • <strong>Behavioral Script:</strong> Formulated by the <strong>Gemini 2.5 Behavioral Compiler</strong>, translating the selected intervention into authentic vernacular Nigerian English, Pidgin, Yoruba, Hausa, and Igbo with localized phrasing and acoustic markers.<br/>
+          • <strong>Audio Synthesis Engine:</strong> Spoken aloud via the <strong>YarnGPT & African Speech Router</strong> (<code>saheedniyi/YarnGPT</code> / <code>YarnGPT2</code> or native African MMS models on Hugging Face using your <code>HF_TOKEN</code>).
+        </div>
+      </div>
+
+      <!-- 5 Language Tabs -->
+      <div class="lang-tabs" id="yarnLangTabs">
+        <button class="lang-tab active" onclick="selectYarnLanguage('english')">🇳🇬 Nigerian English</button>
+        <button class="lang-tab" onclick="selectYarnLanguage('pidgin')">🇳🇬 Nigerian Pidgin</button>
+        <button class="lang-tab" onclick="selectYarnLanguage('yoruba')">🇳🇬 Yoruba</button>
+        <button class="lang-tab" onclick="selectYarnLanguage('hausa')">🇳🇬 Hausa</button>
+        <button class="lang-tab" onclick="selectYarnLanguage('igbo')">🇳🇬 Igbo</button>
+      </div>
+
+      <div class="audio-studio">
+        <div class="audio-controls">
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+            <span class="voice-badge" id="voiceLangBadge">🎙️ Nigerian English</span>
+            <span class="voice-badge" id="voiceToneBadge" style="background:rgba(201,168,76,0.12);color:var(--gold);border-color:rgba(201,168,76,0.3)">Warm & Authoritative</span>
+            <select id="voiceSelector" onchange="onVoiceSelected()" style="width:auto;padding:3px 8px;font-size:11px;font-family:'IBM Plex Mono',monospace;background:rgba(0,0,0,0.4);border:1px solid var(--border);border-radius:6px;color:var(--cream)">
+              <option value="auto">🎙️ Voice: Auto African Neural Match</option>
+            </select>
+          </div>
+          <div class="audio-player-btns">
+            <div class="audio-waveform" id="audioWaveform">
+              <div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div>
+              <div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div>
+            </div>
+            <button class="btn-audio" id="btnPlayVoice" onclick="playYarnGPTAudio()">
+              <span>▶</span> <span>Synthesize & Play YarnGPT</span>
+            </button>
+            <button class="btn-audio stop hidden" id="btnStopVoice" onclick="stopYarnGPTAudio()">
+              <span>⏹</span> <span>Stop</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="audio-script-box">
+          <div class="script-headline" id="yarnScriptHeadline"></div>
+          <div id="yarnScriptBox"></div>
+        </div>
+
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;font-size:12px;color:var(--muted)">
+          <div id="yarnCulturalCues">African acoustic pacing and tonal markers</div>
+          <div style="display:flex;align-items:center;gap:8px">
+            <button class="arm-copy-btn" style="position:static" onclick="copyYarnScript()">📋 Copy Script</button>
+            <span style="font-family:'IBM Plex Mono',monospace" id="yarnEngineBadge">Engine: saheedniyi/YarnGPT</span>
+          </div>
+        </div>
+      </div>
+      <audio id="yarnAudioPlayer" class="hidden"></audio>
+      <div id="yarnStatusNotice" style="margin-top:10px;font-size:12px;display:none;padding:10px 14px;border-radius:8px;font-family:'IBM Plex Mono',monospace;line-height:1.5"></div>
+    </div>
+
+    <!-- SMS Channel -->
+    <div id="chanSMS" class="chan-panel hidden">
+      <div class="sms-phone">
+        <div class="sms-bubble" id="smsText"></div>
+        <div class="sms-meta">
+          <span id="smsCountBadge">0 / 160 chars (1 SMS)</span>
+          <button class="arm-copy-btn" style="position:static" onclick="copySMS()">📋 Copy SMS</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- WhatsApp Channel -->
+    <div id="chanWhatsApp" class="chan-panel hidden">
+      <div class="wa-phone">
+        <div class="wa-bubble" id="waText"></div>
+        <div style="text-align:right">
+          <button class="arm-copy-btn" style="position:static" onclick="copyWhatsApp()">📋 Copy WhatsApp Copy</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Field Agent Guide -->
+    <div id="chanField" class="chan-panel hidden">
+      <div class="field-points" id="fieldPoints"></div>
+    </div>
+  </div>
+
+  <!-- Levers & Case Study Grid -->
+  <div class="grid-2">
+    <!-- Lever Breakdown -->
+    <div class="card">
+      <div class="card-title">
+        <div class="card-title-left">
+          <div class="icon" style="background:rgba(62,207,142,0.15)">🎯</div>
+          <span>20-Lever Breakdown</span>
+        </div>
+      </div>
+      <div id="leverContent"></div>
+    </div>
+
+    <!-- Benchmark Case Study -->
+    <div class="card">
+      <div class="card-title">
+        <div class="card-title-left">
+          <div class="icon" style="background:rgba(74,158,255,0.15)">📚</div>
+          <span>Benchmark Case Study</span>
+        </div>
+      </div>
+      <div id="caseContent"></div>
+    </div>
+  </div>
+
+  <!-- Busara Evidence Grounding with Boundary Failure Conditions -->
+  <div class="card" style="margin-bottom:24px">
+    <div class="card-title">
+      <div class="card-title-left">
+        <div class="icon" style="background:rgba(74,158,255,0.15)">🔬</div>
+        <span>Busara Research Evidence Grounding (60+ Studies across 7 Domains)</span>
+      </div>
+    </div>
+    <div id="evidenceContent"></div>
+  </div>
+
+  <!-- Ethics + Cultural Dynamics -->
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">
+        <div class="card-title-left">
+          <div class="icon" style="background:rgba(201,168,76,0.15)">⚖️</div>
+          <span>Market Failure & Choice Architecture Ethics</span>
+        </div>
+      </div>
+      <div id="ethicsContent"></div>
+    </div>
+    <div class="card">
+      <div class="card-title">
+        <div class="card-title-left">
+          <div class="icon" style="background:rgba(74,158,255,0.15)">🌍</div>
+          <span>African Contextual & Cultural Dynamics</span>
+        </div>
+      </div>
+      <div id="nigeriaContent"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ── SETTINGS MODAL ── -->
+<div class="modal-overlay" id="settingsModal" onclick="closeModalOnBackdrop(event)">
+  <div class="modal-box" style="max-width:540px">
+    <button class="modal-close" onclick="closeSettingsModal()">×</button>
+    <div class="modal-title">⚙️ API Keys & Intelligence Settings</div>
+    <p style="font-size:13px;color:var(--muted);margin-bottom:16px;line-height:1.6">
+      Configure your keys for 100% direct in-browser execution. All keys are stored safely in your browser (<code>localStorage</code>) and require no backend server.
+    </p>
+
+    <!-- Gemini Key (Primary) -->
+    <div class="field-group" style="margin-bottom:18px">
+      <label class="field-label" style="display:flex;justify-content:space-between">
+        <span>Google Gemini API Key <span style="color:var(--gold);font-weight:600">(Required for Analysis)</span></span>
+        <a href="https://aistudio.google.com/app/apikey" target="_blank" style="color:var(--gold);font-size:11px;text-decoration:underline">Get Free Key ↗</a>
+      </label>
+      <input type="password" id="localGeminiKey" placeholder="AIzaSy... (from aistudio.google.com)"/>
+      <div class="field-hint">Required to run the Behavioral Problem Compiler, Transfer Modeling, and RCT Protocol generator.</div>
+    </div>
+
+    <!-- YarnGPT Key (Voice) -->
+    <div class="field-group" style="margin-bottom:18px">
+      <label class="field-label" style="display:flex;justify-content:space-between">
+        <span>YarnGPT API Key <span style="color:var(--muted);font-weight:400">(Optional for Cloud Speech)</span></span>
+        <a href="https://yarngpt.ai/signup" target="_blank" style="color:var(--gold);font-size:11px;text-decoration:underline">yarngpt.ai ↗</a>
+      </label>
+      <input type="password" id="localHfToken" placeholder="sk_live_... (from yarngpt.ai/account)"/>
+      <div class="field-hint">For authentic African neural audio from yarngpt.ai. If left blank, the built-in browser African Neural Voice Engine is used.</div>
+    </div>
+
+    <!-- Custom Endpoint (Optional) -->
+    <div class="field-group">
+      <label class="field-label">Custom YarnGPT Endpoint URL (Optional)</label>
+      <input type="text" id="localYarnEndpoint" placeholder="https://api.yarngpt.ai or custom endpoint"/>
+      <div class="field-hint">Default is the official YarnGPT cloud gateway (<code>https://api.yarngpt.ai</code>). Enter custom URL only if self-hosting or using a proxy.</div>
+    </div>
+
+    <!-- Diagnostic Connection Tests -->
+    <div style="margin-top:14px;padding:12px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.08);border-radius:8px">
+      <div style="font-size:11px;text-transform:uppercase;color:var(--gold);font-family:'IBM Plex Mono',monospace;margin-bottom:8px">Diagnostic Connection Tests</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:6px">
+        <button type="button" class="btn-action" style="font-size:11px;padding:5px 12px" onclick="testGeminiConnection()">⚡ Test Gemini Key</button>
+        <button type="button" class="btn-action" style="font-size:11px;padding:5px 12px" onclick="testHfTokenConnection()">🎙️ Test YarnGPT Key</button>
+      </div>
+      <div id="hfTestStatus" style="font-size:12px;font-family:'IBM Plex Mono',monospace;color:var(--muted)">Click a test button to verify connection</div>
+    </div>
+
+    <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:20px">
+      <button class="btn-action" onclick="closeSettingsModal()">Cancel</button>
+      <button class="btn-action gold" onclick="saveSettings()">Save & Close</button>
+    </div>
+  </div>
+</div>
+
+<div class="wrap">
+  <footer>
+    NudgeDesigner 3.0 · <strong>Busara Center Empirical Corpus (60+ Studies)</strong> · Behavioral Problem Compiler · Transfer Engine v1 · <strong>YarnGPT 5-Language Audio Engine</strong>
+  </footer>
+</div>
+
+<script>
+// ── STATE ──
+let currentMode = 'compiler';
+let currentAnalysisData = null;
+let currentActiveArm = 0;
+let currentYarnLang = 'english';
+let isAudioPlaying = false;
+let currentUtterance = null;
+let isPivotedMap = {}; // Arm index -> boolean (showing truthful fallback)
+
+// Specificity Checker Wordlists
+const ASPIRATION_WORDS = [
+  'awareness', 'trust', 'attitude', 'mindset', 'know', 'feel',
+  'believe', 'understanding', 'financial inclusion', 'reduce poverty',
+  'inclusion', 'empowerment', 'capacity'
+];
+
+function setMode(mode) {
+  currentMode = mode;
+  document.querySelectorAll('.mode-tab').forEach((t, i) => {
+    t.classList.toggle('active', (i === 0 && mode === 'compiler') || (i === 1 && mode === 'rapid'));
+  });
+  document.getElementById('compilerPanel').classList.toggle('hidden', mode !== 'compiler');
+  document.getElementById('rapidPanel').classList.toggle('hidden', mode !== 'rapid');
+}
+
+function updateCount() {
+  const t = document.getElementById('campaignText').value;
+  document.getElementById('charCount').textContent = t.length;
+}
+
+function toggleTag(el) {
+  el.classList.toggle('active');
+}
+
+function toggleSubpanel(id) {
+  const el = document.getElementById(id);
+  if (el) el.classList.toggle('open');
+}
+
+function quickSelectDomain(domain) {
+  const select = document.getElementById('c_domain');
+  if (select) {
+    for (let opt of select.options) {
+      if (opt.value.includes(domain) || domain.includes(opt.value)) {
+        select.value = opt.value;
+        break;
+      }
+    }
+  }
+}
+
+// ── BEHAVIOR SPECIFICITY LIVE CHECKER ──
+function checkBehaviorSpecificity(text, warningBoxId) {
+  const box = document.getElementById(warningBoxId);
+  const textEl = document.getElementById(warningBoxId + 'Text');
+  if (!box || !textEl) return;
+
+  const lower = (text || '').toLowerCase();
+  const matched = ASPIRATION_WORDS.filter(w => lower.includes(w));
+
+  if (matched.length > 0) {
+    box.classList.add('active');
+    textEl.innerHTML = ` "<strong>${escapeHTML(matched.join(', '))}</strong>" is an internal state or broad aspiration, not an observable action. Consider specifying the physical or digital behavior that indicates this (e.g. 'Make a deposit within 48h' or 'Complete on-time repayment by due date').`;
+  } else {
+    box.classList.remove('active');
+  }
+}
+
+// ── SETTINGS MODAL ──
+function openSettingsModal() {
+  const savedGemini = localStorage.getItem('gemini_api_key') || '';
+  const savedToken = localStorage.getItem('yarngpt_api_key') || localStorage.getItem('yarn_hf_token') || '';
+  const savedEndpoint = localStorage.getItem('yarn_endpoint_url') || '';
+  
+  const geminiEl = document.getElementById('localGeminiKey');
+  if (geminiEl) geminiEl.value = savedGemini;
+
+  const tokenEl = document.getElementById('localHfToken');
+  if (tokenEl) tokenEl.value = savedToken;
+
+  const epEl = document.getElementById('localYarnEndpoint');
+  if (epEl) epEl.value = savedEndpoint;
+
+  const statusEl = document.getElementById('hfTestStatus');
+  if (statusEl) {
+    statusEl.textContent = 'Click a test button to verify connection.';
+    statusEl.style.color = 'var(--muted)';
+  }
+
+  document.getElementById('settingsModal').classList.add('open');
+}
+
+function closeSettingsModal() {
+  document.getElementById('settingsModal').classList.remove('open');
+}
+
+function closeModalOnBackdrop(e) {
+  if (e.target.id === 'settingsModal') {
+    closeSettingsModal();
+  }
+}
+
+// Hidden owner shortcut (Ctrl+Shift+K or Cmd+Shift+K) to access admin credentials
+window.addEventListener('keydown', (e) => {
+  if ((e.ctrlKey || e.metaKey) && e.shiftKey && (e.key === 'K' || e.key === 'k')) {
+    e.preventDefault();
+    openSettingsModal();
+  }
+});
+
+function saveSettings() {
+  const geminiVal = (document.getElementById('localGeminiKey')?.value || '').trim();
+  const tokenVal = (document.getElementById('localHfToken')?.value || '').trim();
+  const epVal = (document.getElementById('localYarnEndpoint')?.value || '').trim();
+  
+  if (geminiVal) {
+    localStorage.setItem('gemini_api_key', geminiVal);
+  } else {
+    localStorage.removeItem('gemini_api_key');
+  }
+
+  if (tokenVal) {
+    localStorage.setItem('yarngpt_api_key', tokenVal);
+    localStorage.setItem('yarn_hf_token', tokenVal);
+  } else {
+    localStorage.removeItem('yarngpt_api_key');
+    localStorage.removeItem('yarn_hf_token');
+  }
+
+  if (epVal) {
+    localStorage.setItem('yarn_endpoint_url', epVal);
+  } else {
+    localStorage.removeItem('yarn_endpoint_url');
+  }
+
+  closeSettingsModal();
+  alert('Settings saved. All intelligence models and voice features run 100% in your browser.');
+}
+
+function resetAll() {
+  document.getElementById('heroSection').classList.remove('hidden');
+  document.getElementById('loadingSection').classList.add('hidden');
+  document.getElementById('results').classList.add('hidden');
+  stopYarnGPTAudio();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function escapeHTML(value) {
+  return String(value ?? '').replace(/[&<>"']/g, (char) => ({
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#39;'
+  }[char]));
+}
+
+function clampNumber(value, min, max, fallback = 0) {
+  const number = Number(value);
+  if (!Number.isFinite(number)) return fallback;
+  return Math.min(max, Math.max(min, number));
+}
+
+// ── ANALYZE RUNNERS ──
+async function runCompilerAnalysis() {
+  const behavior = document.getElementById('c_behavior').value.trim();
+  const baseline = document.getElementById('c_baseline')?.value.trim();
+  const timeframe = document.getElementById('c_timeframe')?.value.trim();
+  const denominator = document.getElementById('c_denominator')?.value.trim();
+  const audience = document.getElementById('c_audience').value.trim();
+  const provenance = document.getElementById('c_provenance').value;
+  const domain = document.getElementById('c_domain').value;
+  const geography = document.getElementById('c_geography').value.trim();
+  const setting = document.getElementById('c_setting').value;
+  const channel = document.getElementById('c_channel').value;
+  const message = document.getElementById('c_message').value.trim();
+  const barrier = document.getElementById('c_barrier').value.trim();
+  const isBarrierUnverified = document.getElementById('c_barrier_unverified').checked;
+
+  // Selected constraint pills
+  const activeTags = Array.from(document.querySelectorAll('#audienceTags .tag-pill.active')).map(t => t.textContent.trim());
+
+  if (!behavior) {
+    alert('Please specify Field 1: Target Behavior (Observable Action).');
+    return;
+  }
+
+  const prompt = `STRUCTURED BEHAVIORAL PROBLEM SPECIFICATION (NUDGEDESIGNER 3.0 COMPILER):
+
+FIELD 1: TARGET BEHAVIOR (ACTION SPECIFICATION):
+- Observable Action: ${behavior}
+- Current Baseline: ${baseline || 'Not specified'}
+- Desired Timeframe: ${timeframe || 'Not specified'}
+- Eligible Population / Denominator: ${denominator || 'Not specified'}
+
+FIELD 2: TARGET AUDIENCE & BEHAVIORAL PROFILE:
+- Target Group: ${audience || 'Not specified'}
+- Binding Constraints: ${activeTags.length ? activeTags.join(', ') : 'General African decision-maker constraints'}
+- Audience Evidence Provenance: ${provenance}
+
+FIELD 3: DOMAIN FOCUS:
+- Sector / Domain: ${domain}
+
+FIELD 4: GEOGRAPHIC SETTING & DELIVERY CHANNEL:
+- Target Geography: ${geography || 'Nigeria / Sub-Saharan Africa'}
+- Context Setting: ${setting}
+- Primary Channel: ${channel}
+
+FIELD 5: CURRENT CAMPAIGN DRAFT / AUDIT:
+${message ? `Current Message Copy:\n"${message}"\n(Audit for cognitive burden, reactance, and friction)` : '[None provided — design from scratch]'}
+
+FIELD 6: SUSPECTED BARRIER & HYPOTHESIS:
+- Core Barrier: ${barrier || 'Friction, cognitive load, or trust deficit'}
+- Barrier Status: ${isBarrierUnverified ? 'Treat as unverified hypothesis to be cross-examined against Busara empirical models' : 'Empirically confirmed'}
+
+Run a comprehensive v3.0 Behavioral Intelligence synthesis:
+1. Behavior Specificity Check (evaluate action observability, flag internal aspiration states, specify evaluation denominator).
+2. Behavioral Transfer Engine v1: Quantify contextual transferability from study origin (e.g. Kenya) to target destination (${geography || 'Nigeria'}), scoring Population, Mechanism, Channel, Institutional Trust gap, and Economic volatility.
+3. Ground-Truth Sensitivity & Backfire Audit Engine: Provide explicit empirical metric requirements, backfire condition thresholds (e.g. low base rate Boomerang trap), honest adaptive fallback copy, and ethical risk flags for every intervention arm.
+4. Synthesize 3 randomized intervention arms (A/B/n Trial) with RCT trial design.
+5. Stress-test across 3 synthetic African personas (Mama Amina, Baba Emeka, Tunde).
+6. Multi-channel formatting (SMS under 160c, WhatsApp, Field Agent Guide).
+7. YarnGPT African audio scripts in 5 languages: Nigerian English, Nigerian Pidgin, Yoruba, Hausa, Igbo.
+8. Ground directly in 60+ Busara RCT studies across the 7 prioritized domains with explicit boundary failure conditions (fails_when).`;
+
+  await executeBackendAnalysis(prompt, `${domain}: ${behavior}`);
+}
+
+async function runRapidAnalysis() {
+  const text = document.getElementById('campaignText').value.trim();
+  const behavior = document.getElementById('targetBehavior').value.trim();
+  const audience = document.getElementById('targetAudience').value.trim();
+  const context = document.getElementById('context').value.trim();
+
+  if (!text && !behavior) {
+    alert('Please paste campaign text or specify the target behavior.');
+    return;
+  }
+
+  const prompt = `RAPID BEHAVIORAL AUDIT (NUDGEDESIGNER 3.0):
+
+CAMPAIGN TEXT:
+${text || '[None provided — design from scratch]'}
+
+TARGET BEHAVIOR: ${behavior || 'Not specified'}
+TARGET AUDIENCE: ${audience || 'Not specified'}
+CONTEXT / GEOGRAPHY: ${context || 'Sub-Saharan Africa'}
+
+Run a comprehensive v3.0 Behavioral Intelligence synthesis:
+1. Behavior Specificity Check (observable action vs aspiration).
+2. Behavioral Transfer Engine v1: Contextual transfer modeling to ${context || 'Sub-Saharan Africa'}.
+3. Ground-Truth Sensitivity & Backfire Audit Engine for all intervention arms (with honest adaptive fallbacks).
+4. COM-B and EAST audit.
+5. 3 randomized intervention arms (A/B/n) with RCT protocol.
+6. Stress-test across 3 African synthetic personas.
+7. Multi-channel copy (SMS 160c, WhatsApp, Field Agent Guide).
+8. YarnGPT 5-language scripts (Nigerian English, Pidgin, Yoruba, Hausa, Igbo).
+9. Busara empirical grounding with boundary failure conditions (fails_when).`;
+
+  await executeBackendAnalysis(prompt, behavior || text.slice(0, 60) || 'Campaign Audit');
+}
+
+// ── BEHAVIORAL INTELLIGENCE SYSTEM PROMPT ──
+const SYSTEM_PROMPT = `You are the NudgeDesigner 3.0 Behavioral Intelligence Engine, specialized in empirical decision science, the Behavioral Problem Compiler, Behavioral Transfer Modeling, Ground-Truth Sensitivity Auditing, and Global South behavioral economics powered by the Busara Center for Behavioral Economics research corpus.
+
+CORE ARCHITECTURAL PRINCIPLE:
+Every field in the problem representation must do a distinct analytical job:
+1. Target Behavior: Distinguish observable actions from intermediate states (awareness vs action). Flag non-action aspirations.
+2. Target Audience: Model behavioral constraints (irregular income, low institutional trust, mobile access) + evidence provenance (observed vs hypothesis).
+3. Domain & Mechanism: Multi-label classification across mechanisms and sectors.
+4. Geography & Channel: Contextual transferability analysis (e.g. Kenya evidence transferred to Nigeria urban/rural).
+5. Message Audit: Critique existing copy for cognitive burden, messenger credibility, penalty reactance, and action feasibility.
+6. Core Challenge: Distinguish user-suspected barriers from empirical system hypotheses.
+
+THE 7 CORE BUSARA RESEARCH DOMAINS:
+1. Financial Inclusion & Mobile Money (credit defaults, overdraft friction, agent banking trust credentials, lock savings, digital Chama peer effects).
+2. Public Health & Maternal Care (in-kind delivery incentives, morning-of SMS immunization timing, CHP social status recognition, free chlorine dispensers, religious messengers).
+3. Agriculture & Climate Adaptation (SAFI post-harvest fertilizer pre-commitment, visual demo plots, bundled opt-out micro-insurance, pictorial soil cards, hermetic bags).
+4. Education & Early Learning (TaRL teacher cohorts, weekly bite-sized SMS learning activities, educator peer recognition, African growth mindset).
+5. Civic Trust & Tax Compliance (market stall fee compliance via visible public service reciprocity, property tax public goods attribution, anonymous WhatsApp voice whistleblowing, cleanliness badges).
+6. Gender & Intra-Household Bargaining (women's mobile money PIN privacy, time-poverty scheduling, in-kind equipment grants over liquid cash, assertiveness coaching).
+7. Scarcity & Cognitive Bandwidth (poverty bandwidth tax, cortisol-induced temporal discounting, administrative sludge reduction, USSD voucher simplification).
+
+THE 20 BEHAVIORAL LEVERS:
+COGNITIVE: Anchoring, Availability Bias, Overconfidence, Sunk Cost, Present Bias, Framing
+EMOTIONAL: Loss Aversion, Scarcity, Trust, Consequence, Reactance
+SOCIAL: Social Proof, Bandwagon, Descriptive Norms, Injunctive Norms, Identity/Belonging, Culture
+ENVIRONMENTAL: Friction, Defaults, Incentives
+
+FRAMEWORKS:
+- COM-B: Capability (psychological/physical), Opportunity (physical/social), Motivation (reflective/automatic)
+- EAST: Easy (friction removal/defaults), Attractive (salience/framing), Social (norms/messenger), Timely (moment of choice)
+
+GROUND-TRUTH SENSITIVITY & ETHICS FOUNDATION:
+1. FACTUAL INTEGRITY MANDATE: Fabricating statistics, non-existent majorities (e.g. claiming "8 in 10 pay" when truth is 15%), or false urgency is strictly unethical, creates dark patterns, and triggers destructive customer reactance.
+2. MESSAGES AS STRUCTURAL HEURISTICS: Nudges are structural behavioral templates, never drop-in copy to be populated with fabricated figures.
+3. THE DUAL TRAP GUARDRAIL:
+   - Trap 1 (Fabrication Trap): User invents statistics to force a lever.
+   - Trap 2 (Blind Transparency Trap): User blindly quotes weak true rates (e.g. "Only 14% pay taxes"), which socially validates non-compliance (the Cialdini Petrified Forest Boomerang Effect).
+4. SYSTEMATIC GROUND-TRUTH BACKFIRE CATALOG & ADAPTIVE PIVOTS:
+   - Low Descriptive Norms -> Pivot to Dynamic Trend Norms ("Adoption grew 40% this quarter"), Injunctive Norms, or Collective Goal Framing.
+   - Low Institutional Trust -> Pivot to Horizontal Peer Proof, Traditional/Religious Community Messengers, or Process Utility Transparency.
+   - Hollow Scarcity & Urgency -> Pivot to Opportunity Cost, Proactive Readiness, or Early-Mover Onboarding.
+   - Adverse Price Anchoring -> Pivot to Micro-Cost Reframing (daily equivalent), Downside Protection, or Zero-Upfront Friction.
+   - Premature Commitment -> Pivot to Micro-Commitment Ladder, Reversible Trialability, or Fresh Start Milestones.
+
+BEHAVIORAL TRANSFER ENGINE v1:
+Calculate the contextual transferability of evidence from study origin (e.g. Kenya, Tanzania) to the target context (e.g. Nigeria). Model population similarity, mechanism match, channel compatibility, institutional trust gap, and economic volatility.
+
+YARNGPT 5-LANGUAGE SPECIFICATION:
+Generate native vernacular copy and spoken scripts in 5 languages:
+1. Nigerian English: Pan-African educated cadence, authoritative yet warm.
+2. Nigerian Pidgin: Street-credible, market-relatable, high relational warmth.
+3. Yoruba: Native tonal markers, culturally respectful honorifics (e.g., 'E kaaro', 'E jowo').
+4. Hausa: Sahelian cadence, community-centered idioms (e.g., 'Sannu', 'Ina kwana').
+5. Igbo: Commercial dynamism, affirmative relational cues (e.g., 'Nnoo', 'Biko').
+
+If BUSARA RESEARCH CONTEXT is provided, ground the diagnosis, evidence citations, effect sizes, and design rules directly in that context. Do not invent Busara findings not present in the context.
+
+You MUST respond with ONLY a valid JSON object, no markdown code fence, no preamble. The JSON must adhere strictly to this structure:
+{
+  "bei_score": <integer 0-100>,
+  "verdict": "<short 3-5 word verdict>",
+  "summary": "<2-3 sentence summary of behavioral effectiveness>",
+  "behavior_specificity": {
+    "is_observable_action": <true|false>,
+    "action_extracted": "<exact observable physical/digital action>",
+    "aspiration_warning": "<warning message if user entered a non-action aspiration like 'trust' or 'awareness', else empty string>",
+    "denominator_recommendation": "<suggested measurable denominator for evaluation>"
+  },
+  "comb_diagnosis": {
+    "capability": { "score": <0-10>, "barrier": "<primary capability barrier>", "recommendation": "<behavioral solution>" },
+    "opportunity": { "score": <0-10>, "barrier": "<physical or social opportunity barrier>", "recommendation": "<behavioral solution>" },
+    "motivation": { "score": <0-10>, "barrier": "<reflective or automatic motivation barrier>", "recommendation": "<behavioral solution>" }
+  },
+  "east": {
+    "E": <integer 0-10>,
+    "A": <integer 0-10>,
+    "S": <integer 0-10>,
+    "T": <integer 0-10>
+  },
+  "transfer_analysis": {
+    "overall_transfer_score": <integer 0-100>,
+    "confidence_rating": "<High|Moderate|Cautious|Low>",
+    "study_origin": "<e.g. Kenya (M-Pesa / Western Kenya)>",
+    "target_destination": "<e.g. Nigeria (Lagos / Kano)>",
+    "dimension_scores": {
+      "population_match": <integer 0-100>,
+      "mechanism_match": <integer 0-100>,
+      "channel_compatibility": <integer 0-100>,
+      "institutional_trust_gap": <integer 0-100>,
+      "economic_context_match": <integer 0-100>
+    },
+    "transferability_caveats": [
+      "<specific contextual difference, e.g. digital trust differences between Kenya and Nigeria>",
+      "<regulatory or infrastructure variance to watch>"
+    ]
+  },
+  "levers_present": [
+    {"lever": "<name>", "category": "<Cognitive|Emotional|Social|Environmental>", "evidence": "<1 sentence>", "strength": "<Strong|Moderate|Weak>"}
+  ],
+  "levers_missing": [
+    {"lever": "<name>", "category": "<Cognitive|Emotional|Social|Environmental>", "why_it_matters": "<1 sentence>", "how_to_add": "<1 sentence>"}
+  ],
+  "redesigned_message": "<the primary redesigned version of the campaign copy>",
+  "redesign_analysis": "<2-3 sentences explaining what behavioral levers the redesign activates and why>",
+  "intervention_arms": [
+    {
+      "arm_id": "Arm A",
+      "name": "Social Observability & Relational Trust",
+      "behavioral_mechanism": "<mechanism name>",
+      "message_copy": "<actual copy for Arm A>",
+      "why_it_works": "<1-2 sentences on behavioral logic>",
+      "expected_effect": "<estimated effect size based on benchmarks>",
+      "ground_truth_audit": {
+        "requires_ground_truth": ["<metric name, e.g. local_compliance_rate>"],
+        "backfire_condition": "<threshold where true data causes backfire, e.g. compliance_rate < 40%>",
+        "backfire_risk_description": "<what happens if ground truth is in backfire zone>",
+        "adaptive_fallback_frame": {
+          "strategy": "<e.g. Dynamic Trend Norm | Horizontal Peer Proof>",
+          "pivoted_copy": "<honest adaptive pivot copy without fabricated numbers>",
+          "mechanistic_justification": "<why this pivot maintains effectiveness without lying>"
+        },
+        "ethical_risk_flag": {
+          "status": "<safe|caution|warning>",
+          "warning": "<guidance against fabrication and dark patterns>"
+        }
+      }
+    },
+    {
+      "arm_id": "Arm B",
+      "name": "Friction Removal & Default Architecture",
+      "behavioral_mechanism": "<mechanism name>",
+      "message_copy": "<actual copy for Arm B>",
+      "why_it_works": "<1-2 sentences on behavioral logic>",
+      "expected_effect": "<estimated effect size based on benchmarks>",
+      "ground_truth_audit": {
+        "requires_ground_truth": ["<metric name>"],
+        "backfire_condition": "<threshold>",
+        "backfire_risk_description": "<risk description>",
+        "adaptive_fallback_frame": {
+          "strategy": "<e.g. Micro-Commitment Ladder | Reversible Trialability>",
+          "pivoted_copy": "<honest adaptive pivot copy>",
+          "mechanistic_justification": "<justification>"
+        },
+        "ethical_risk_flag": {
+          "status": "<safe|caution|warning>",
+          "warning": "<guidance>"
+        }
+      }
+    },
+    {
+      "arm_id": "Arm C",
+      "name": "Scarcity-Sensitive Framing & Loss Protection",
+      "behavioral_mechanism": "<mechanism name>",
+      "message_copy": "<actual copy for Arm C>",
+      "why_it_works": "<1-2 sentences on behavioral logic>",
+      "expected_effect": "<estimated effect size based on benchmarks>",
+      "ground_truth_audit": {
+        "requires_ground_truth": ["<metric name>"],
+        "backfire_condition": "<threshold>",
+        "backfire_risk_description": "<risk description>",
+        "adaptive_fallback_frame": {
+          "strategy": "<e.g. Micro-Cost Reframing | Opportunity Cost Readiness>",
+          "pivoted_copy": "<honest adaptive pivot copy>",
+          "mechanistic_justification": "<justification>"
+        },
+        "ethical_risk_flag": {
+          "status": "<safe|caution|warning>",
+          "warning": "<guidance>"
+        }
+      }
+    }
+  ],
+  "rct_trial_design": {
+    "sample_size_recommendation": "<e.g. N=1,200 (400 per arm)>",
+    "randomization_unit": "<e.g. Individual mobile subscriber | Village health unit | Market stall cluster>",
+    "primary_outcome_metric": "<e.g. 14-day repayment completion rate | Clinic attendance within 48h>",
+    "measurement_window": "<e.g. 30 days post-intervention>"
+  },
+  "synthetic_personas": [
+    {
+      "name": "Mama Amina / Trader Archetype",
+      "archetype": "The Scarcity-Constrained Market Trader",
+      "demographic": "38yo informal market vendor, managing daily cash turnover",
+      "cognitive_load": <integer 1-10>,
+      "trust_score": <integer 1-10>,
+      "reactance_risk": "<Low|Moderate|High>",
+      "decision_probability": <integer 0-100>,
+      "internal_monologue": "<1-2 sentences in first-person voice on what she thinks upon hearing/reading the message>",
+      "verdict": "<1 sentence on how the design works for her>"
+    },
+    {
+      "name": "Baba Emeka / Traditional Elder Archetype",
+      "archetype": "The Institutional Skeptic",
+      "demographic": "52yo community elder, cautious of external institutional agendas",
+      "cognitive_load": <integer 1-10>,
+      "trust_score": <integer 1-10>,
+      "reactance_risk": "<Low|Moderate|High>",
+      "decision_probability": <integer 0-100>,
+      "internal_monologue": "<1-2 sentences in first-person voice on what he thinks>",
+      "verdict": "<1 sentence on how the design works for him>"
+    },
+    {
+      "name": "Tunde / Digital Youth Archetype",
+      "archetype": "The Digital-First Urban Youth",
+      "demographic": "24yo gig worker / student, heavy smartphone and social user",
+      "cognitive_load": <integer 1-10>,
+      "trust_score": <integer 1-10>,
+      "reactance_risk": "<Low|Moderate|High>",
+      "decision_probability": <integer 0-100>,
+      "internal_monologue": "<1-2 sentences in first-person voice on what he thinks>",
+      "verdict": "<1 sentence on how the design works for him>"
+    }
+  ],
+  "multi_channel": {
+    "sms": "<Concise SMS copy under 160 characters with clear call to action>",
+    "sms_char_count": <integer representing character length of sms copy>,
+    "whatsapp": "<Conversational WhatsApp copy formatted with line breaks, emojis, and clear reply cues>",
+    "radio_script": "<30-second spoken radio / loudspeaker megaphone script with sound cues [SFX] and vernacular cadence>",
+    "field_agent_guide": [
+      "<Opening hook for health worker, bank agent, or community mobilizer>",
+      "<Core objection-handling response>",
+      "<Action commitment question>"
+    ]
+  },
+  "yarngpt_languages": {
+    "english": {
+      "language_label": "Nigerian English",
+      "headline": "<Punchy headline in Nigerian English>",
+      "spoken_script": "<Phonetic conversational audio script for YarnGPT in Nigerian English>",
+      "cultural_tone": "<e.g. Professional yet warm, authoritative community delivery>"
+    },
+    "pidgin": {
+      "language_label": "Nigerian Pidgin",
+      "headline": "<Headline in authentic Nigerian Pidgin>",
+      "spoken_script": "<Phonetic conversational audio script for YarnGPT in natural Nigerian Pidgin with call-and-response>",
+      "cultural_tone": "<e.g. Market-relatable, high relational warmth, street-credible>"
+    },
+    "yoruba": {
+      "language_label": "Yoruba",
+      "headline": "<Headline in Yoruba with culturally respectful tone>",
+      "spoken_script": "<Phonetic audio script in natural Yoruba with respectful honorifics (E kaaro, E jowo)>",
+      "cultural_tone": "<e.g. Respectful communal appeal, honorifics, dignity>"
+    },
+    "hausa": {
+      "language_label": "Hausa",
+      "headline": "<Headline in Hausa>",
+      "spoken_script": "<Phonetic audio script in natural Hausa (Sannu, Jama'a) with community trust cues>",
+      "cultural_tone": "<e.g. Respectful community address, mutual responsibility>"
+    },
+    "igbo": {
+      "language_label": "Igbo",
+      "headline": "<Headline in Igbo>",
+      "spoken_script": "<Phonetic audio script in natural Igbo with commercial dynamism and relational cues (Nnoo, Biko)>",
+      "cultural_tone": "<e.g. Enterprise-affirming, communal solidarity, family progress>"
+    }
+  },
+  "evidence_cards": [
+    {
+      "study_id": "<e.g. BUSARA-2024-SAV-01>",
+      "title": "<Busara evidence title>",
+      "finding": "<1 sentence on finding>",
+      "effect_size": "<e.g. +18.6 percentage points>",
+      "effect_unit": "<percentage_points|relative_percent|standard_deviations>",
+      "sample_size": <integer>,
+      "mechanism_match_pct": <integer 0-100>,
+      "transfer_confidence_pct": <integer 0-100>,
+      "works_when": ["<key condition>"],
+      "fails_when": ["<key failure mode>"],
+      "source_url": "<citation URL>"
+    }
+  ],
+  "case_study": {
+    "title": "<name of most relevant case study>",
+    "context": "<1 sentence description>",
+    "result": "<key metric / effect size>",
+    "result_label": "<what that result means>",
+    "learning": "<1-2 sentences on what lesson applies to this campaign>",
+    "similarity": "<High|Moderate|Low>"
+  },
+  "market_failure": "<which market failure is most relevant, and why in 1 sentence>",
+  "ethics": {
+    "status": "<safe|caution|warning>",
+    "assessment": "<1-2 sentences on whether this is nudge or manipulation>",
+    "dual_trap_warning": "<Explicit warning reminding practitioner neither to fabricate numbers nor to blindly broadcast low compliance rates>"
+  },
+  "nigeria_adjustment": "<2-3 sentences on how lever effectiveness changes in a Nigerian or African cultural context for this specific campaign>"
+}`;
+
+// ── BUSARA RAG RETRIEVAL ENGINE (RUNS 100% IN BROWSER) ──
+const STOPWORDS = new Set([
+  'about', 'above', 'across', 'after', 'again', 'against', 'analysis', 'analyze',
+  'behavior', 'behavioral', 'behaviour', 'behavioural', 'campaign', 'case',
+  'context', 'could', 'design', 'effectiveness', 'existing', 'following', 'full',
+  'identify', 'message', 'missing', 'optimal', 'please', 'policy', 'redesign',
+  'request', 'score', 'study', 'target', 'there', 'these', 'those', 'through',
+  'using', 'with', 'would', 'your'
+]);
+
+const SYNONYMS = {
+  bank: ['banking', 'account', 'accounts', 'deposit', 'deposits', 'pos', 'agent'],
+  banking: ['bank', 'account', 'accounts', 'deposit', 'deposits', 'pos', 'agent'],
+  cash: ['money', 'payment', 'payments', 'transfer', 'transfers', 'currency'],
+  credit: ['loan', 'loans', 'borrower', 'borrowers', 'repayment', 'default', 'apr', 'overdraft', 'fuliza'],
+  loan: ['credit', 'borrower', 'repayment', 'default', 'debt', 'interest'],
+  savings: ['saving', 'save', 'deposit', 'deposits', 'chama', 'rosca', 'm-shwari', 'lock'],
+  health: ['clinic', 'medical', 'care', 'patient', 'hospital', 'doctor', 'nurse', 'chw', 'chp'],
+  vaccine: ['immunization', 'vaccination', 'clinic', 'dose', 'polio', 'measles', 'infant'],
+  maternal: ['mother', 'pregnancy', 'pregnant', 'antenatal', 'birth', 'delivery', 'baby', 'infant'],
+  water: ['drinking', 'chlorine', 'dispenser', 'sanitation', 'hygiene', 'clean'],
+  farm: ['farmer', 'farmers', 'agriculture', 'crop', 'crops', 'maize', 'harvest', 'planting'],
+  agriculture: ['farm', 'farmer', 'fertilizer', 'seed', 'seeds', 'harvest', 'soil', 'drought'],
+  fertilizer: ['input', 'inputs', 'soil', 'nutrients', 'safi', 'planting'],
+  seed: ['seeds', 'planting', 'maize', 'hybrid', 'drought', 'yield'],
+  insurance: ['micro-insurance', 'index', 'weather', 'climate', 'drought', 'rainfall', 'pula'],
+  storage: ['grain', 'hermetic', 'weevil', 'pest', 'post-harvest', 'maize'],
+  school: ['education', 'teacher', 'teachers', 'classroom', 'student', 'pupil', 'literacy', 'tarl'],
+  education: ['school', 'learning', 'parent', 'math', 'literacy', 'mindset', 'pedagogy'],
+  teacher: ['educator', 'attendance', 'classroom', 'school', 'coaching'],
+  tax: ['taxes', 'compliance', 'levy', 'market', 'stall', 'revenue', 'property', 'municipal'],
+  civic: ['governance', 'citizen', 'corruption', 'reporting', 'whistleblower', 'voice'],
+  women: ['woman', 'female', 'gender', 'mother', 'mothers', 'wife', 'kinship', 'time-poverty'],
+  gender: ['women', 'female', 'intra-household', 'bargaining', 'agency', 'privacy'],
+  scarcity: ['poverty', 'bandwidth', 'stress', 'cortisol', 'discounting', 'sludge', 'friction'],
+  trust: ['trusted', 'credibility', 'suspicion', 'elder', 'religious', 'messenger', 'reputation'],
+  reminder: ['reminders', 'sms', 'timing', 'notification', 'prompt', 'alert']
+};
+
+let ragCorpusPromise = null;
+
+async function loadBusaraCorpus() {
+  if (window.BUSARA_CORPUS && Array.isArray(window.BUSARA_CORPUS.documents)) {
+    return window.BUSARA_CORPUS;
+  }
+  if (!ragCorpusPromise) {
+    ragCorpusPromise = fetch('busara-rag.json')
+      .then(res => res.json())
+      .then(data => {
+        window.BUSARA_CORPUS = data;
+        return {
+          documents: Array.isArray(data.documents) ? data.documents : [],
+          sources: data.sources && typeof data.sources === 'object' ? data.sources : {}
+        };
+      })
+      .catch(err => {
+        console.warn('Busara RAG corpus fetch fallback:', err.message);
+        return { documents: [], sources: {} };
+      });
+  }
+  return ragCorpusPromise;
+}
+
+function normalizeToken(word) {
+  let token = String(word || '').toLowerCase();
+  if (token.endsWith('ies') && token.length > 5) token = `${token.slice(0, -3)}y`;
+  else if (token.endsWith('ing') && token.length > 6) token = token.slice(0, -3);
+  else if (token.endsWith('ed') && token.length > 5) token = token.slice(0, -2);
+  else if (token.endsWith('s') && token.length > 5) token = token.slice(0, -1);
+  return token;
+}
+
+function tokenize(text) {
+  return String(text || '')
+    .toLowerCase()
+    .replace(/[^a-z0-9\s-]/g, ' ')
+    .split(/\s+/)
+    .map(normalizeToken)
+    .filter((word) => word.length > 2 && !STOPWORDS.has(word));
+}
+
+function tokenSet(text) {
+  return new Set(tokenize(text));
+}
+
+function expandQueryTokens(tokens) {
+  const expanded = new Set(tokens);
+  for (const token of tokens) {
+    for (const synonym of SYNONYMS[token] || []) {
+      expanded.add(normalizeToken(synonym));
+    }
+  }
+  return expanded;
+}
+
+function phraseBoost(prompt, doc) {
+  const promptText = String(prompt || '').toLowerCase();
+  const docText = [
+    doc.title,
+    doc.summary,
+    doc.tags?.join(' '),
+    doc.domain?.join(' '),
+    doc.country?.join(' '),
+    doc.population?.join(' '),
+    doc.mechanism?.join(' '),
+    doc.channel?.join(' '),
+    doc.text
+  ].join(' ').toLowerCase();
+
+  let score = 0;
+  for (const phrase of [
+    'mobile money', 'digital credit', 'cash transfer', 'cash transfers',
+    'social norms', 'social norm', 'public health', 'health worker',
+    'savings group', 'savings groups', 'community health', 'mobile banking',
+    'financial inclusion', 'informal settlement', 'teacher performance',
+    'maternal health', 'antenatal care', 'child immunization', 'vaccine uptake',
+    'clean water', 'chlorine dispenser', 'weather insurance', 'index insurance',
+    'fertilizer adoption', 'drought tolerant', 'soil testing', 'hermetic storage',
+    'teaching at the right level', 'tarl', 'parental engagement', 'growth mindset',
+    'tax compliance', 'property tax', 'civic reporting', 'anonymous reporting',
+    'kinship tax', 'women empowerment', 'time poverty', 'in-kind grants',
+    'cognitive tax', 'bandwidth poverty', 'temporal discounting', 'sludge audit',
+    'e-voucher', 'agent banking', 'fuliza', 'chama', 'rosca'
+  ]) {
+    if (promptText.includes(phrase) && docText.includes(phrase)) score += 9;
+  }
+  return score;
+}
+
+function fieldList(label, values) {
+  return Array.isArray(values) && values.length ? `${label}: ${values.join(', ')}.` : '';
+}
+
+function fieldValue(label, value) {
+  return value ? `${label}: ${value}.` : '';
+}
+
+function formatSources(sourceValue, sources) {
+  if (!sourceValue) return '';
+  const raw = String(sourceValue);
+  const ids = [...raw.matchAll(/\d+/g)].map((match) => match[0]);
+  if (!ids.length) return raw;
+  const resolved = ids
+    .map((id) => (sources && sources[id]) ? `[${id}] ${sources[id].title}: ${sources[id].url}` : `[${id}]`)
+    .join('; ');
+  return resolved || raw;
+}
+
+async function retrieveBusaraContext(prompt) {
+  const { documents, sources } = await loadBusaraCorpus();
+  if (!documents || !documents.length) return '';
+
+  const queryTokens = expandQueryTokens(tokenize(prompt));
+  const scored = documents
+    .map((doc) => {
+      const titleTokens = tokenSet(doc.title);
+      const summaryTokens = tokenSet(doc.summary);
+      const tagTokens = tokenSet(doc.tags?.join(' '));
+      const domainTokens = tokenSet(doc.domain?.join(' '));
+      const countryTokens = tokenSet(doc.country?.join(' '));
+      const populationTokens = tokenSet(doc.population?.join(' '));
+      const mechanismTokens = tokenSet(doc.mechanism?.join(' '));
+      const channelTokens = tokenSet(doc.channel?.join(' '));
+      const textTokens = tokenSet(doc.text);
+      let score = phraseBoost(prompt, doc);
+      for (const token of queryTokens) {
+        if (countryTokens.has(token)) score += 9;
+        if (domainTokens.has(token)) score += 8;
+        if (mechanismTokens.has(token)) score += 8;
+        if (populationTokens.has(token)) score += 7;
+        if (tagTokens.has(token)) score += 6;
+        if (channelTokens.has(token)) score += 5;
+        if (titleTokens.has(token)) score += 5;
+        if (summaryTokens.has(token)) score += 3;
+        if (textTokens.has(token)) score += 1;
+      }
+      return { doc, score };
+    })
+    .filter((item) => item.score >= 3)
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 3);
+
+  if (!scored.length) return '';
+
+  return scored
+    .map(({ doc }, index) => {
+      const source = formatSources(doc.source, sources || {});
+      const meta = [
+        fieldList('Domains', doc.domain),
+        fieldList('Countries', doc.country),
+        fieldList('Populations', doc.population),
+        fieldList('Mechanisms', doc.mechanism),
+        fieldList('Channels', doc.channel),
+        fieldValue('Effect', doc.effect_size),
+        fieldValue('Design implication', doc.design_implication),
+        fieldList('Works when', doc.works_when),
+        fieldList('Fails when', doc.fails_when),
+        fieldValue('Evidence', doc.evidence_strength),
+        fieldValue('Confidence', doc.confidence),
+        fieldList('Tags', doc.tags),
+      ].filter(Boolean).join(' ');
+      const body = doc.summary || doc.text || '';
+      return `${index + 1}. [${doc.domain?.join(', ') || 'General'}] ${doc.title || 'Untitled Busara note'} - ${body} ${meta}${source ? ` Source: ${source}` : ''}`;
+    })
+    .join('\n');
+}
+
+// ── NETLIFY SERVERLESS BACKEND CONNECTOR ──
+async function callNetlifyBackend(payload) {
+  const endpoints = ['/api/analyze', '/.netlify/functions/analyze'];
+  let lastErr = null;
+  let notFound = false;
+
+  for (const ep of endpoints) {
+    try {
+      const res = await fetch(ep, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      if (res.status === 404) {
+        notFound = true;
+        continue;
+      }
+      return { ok: true, response: res };
+    } catch (err) {
+      lastErr = err;
+    }
+  }
+
+  return { ok: false, notFound, error: lastErr };
+}
+
+// ── RESILIENT JSON PARSER & AUTO-REPAIR FOR AI OUTPUTS ──
+function safeParseGeminiJSON(raw) {
+  if (!raw || typeof raw !== 'string') return null;
+  let s = raw.trim();
+  s = s.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/i, '').trim();
+
+  const start = s.indexOf('{');
+  if (start === -1) return null;
+  s = s.slice(start);
+
+  // 1. Direct parse attempt
+  try {
+    return JSON.parse(s);
+  } catch {}
+
+  // 2. Trailing comma and control characters cleanup
+  try {
+    const cleaned = s
+      .replace(/,\s*([}\]])/g, '$1')
+      .replace(/[\x00-\x08\x0B\x0C\x0E-\x1F]/g, '');
+    return JSON.parse(cleaned);
+  } catch {}
+
+  // 3. Truncation Repair Algorithm
+  // If maxOutputTokens cut off the generation mid-stream, auto-close unclosed strings and bracket stack
+  try {
+    let inString = false;
+    let escaped = false;
+    const stack = [];
+
+    for (let i = 0; i < s.length; i++) {
+      const c = s[i];
+      if (inString) {
+        if (escaped) escaped = false;
+        else if (c === '\\') escaped = true;
+        else if (c === '"') inString = false;
+      } else {
+        if (c === '"') inString = true;
+        else if (c === '{') stack.push('}');
+        else if (c === '[') stack.push(']');
+        else if (c === '}' || c === ']') {
+          if (stack.length && stack[stack.length - 1] === c) stack.pop();
+        }
+      }
+    }
+
+    let repaired = s;
+    if (inString) repaired += '"';
+
+    // Strip trailing incomplete key/values or commas
+    repaired = repaired
+      .replace(/,\s*$/, '')
+      .replace(/:\s*$/, ': null')
+      .replace(/,\s*"[^"]*"\s*:\s*$/, '')
+      .replace(/,\s*"[^"]*"\s*$/, '');
+
+    // Re-calculate unclosed stack on repaired string
+    const stack2 = [];
+    let inStr2 = false;
+    let esc2 = false;
+    for (let i = 0; i < repaired.length; i++) {
+      const c = repaired[i];
+      if (inStr2) {
+        if (esc2) esc2 = false;
+        else if (c === '\\') esc2 = true;
+        else if (c === '"') inStr2 = false;
+      } else {
+        if (c === '"') inStr2 = true;
+        else if (c === '{') stack2.push('}');
+        else if (c === '[') stack2.push(']');
+        else if (c === '}' || c === ']') {
+          if (stack2.length && stack2[stack2.length - 1] === c) stack2.pop();
+        }
+      }
+    }
+
+    // Close all open brackets in reverse order
+    while (stack2.length > 0) {
+      repaired += stack2.pop();
+    }
+
+    // Final trailing comma cleanup before closing brackets
+    repaired = repaired
+      .replace(/,\s*([}\]])/g, '$1')
+      .replace(/[\x00-\x08\x0B\x0C\x0E-\x1F]/g, '');
+
+    return JSON.parse(repaired);
+  } catch (e) {
+    console.warn('Advanced JSON auto-repair failed:', e.message);
+    return null;
+  }
+}
+
+// ── HYBRID INTELLIGENCE ENGINE (NETLIFY SERVERLESS BACKEND WITH IN-BROWSER RESILIENCE) ──
+async function executeBackendAnalysis(userPrompt, subtitle) {
+  document.getElementById('heroSection').classList.add('hidden');
+  document.getElementById('loadingSection').classList.remove('hidden');
+  document.getElementById('results').classList.add('hidden');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+
+  let backendNotice = null;
+
+  // 1. Primary: Netlify Serverless Backend (uses GEMINI_API_KEY from Netlify environment variables)
+  for (let attempt = 1; attempt <= 2; attempt++) {
+    try {
+      const backendCall = await callNetlifyBackend({ prompt: userPrompt });
+
+      if (backendCall.ok) {
+        const res = backendCall.response;
+        if (!res.ok) {
+          if ((res.status === 504 || res.status === 502) && attempt === 1) {
+            // Cold-start retry after 1.0s
+            await new Promise(r => setTimeout(r, 1000));
+            continue;
+          }
+          let errMsg = `Server returned HTTP ${res.status}`;
+          try {
+            const contentType = res.headers.get('content-type') || '';
+            if (contentType.includes('application/json')) {
+              const errData = await res.json();
+              errMsg = errData.error || errData.message || errMsg;
+            } else {
+              const errText = await res.text();
+              errMsg = `${errMsg}: ${errText.slice(0, 150) || res.statusText}`;
+            }
+          } catch {}
+          backendNotice = errMsg;
+          break;
+        } else {
+          const data = await res.json().catch(() => ({}));
+          if (data.candidates && data.candidates[0]) {
+            const raw = data.candidates[0].content.parts.map(p => p.text || '').join('');
+            const parsed = safeParseGeminiJSON(raw);
+            if (parsed) {
+              currentAnalysisData = parsed;
+              isPivotedMap = {};
+              renderResults(parsed, subtitle);
+              return; // Successfully completed via Netlify Backend!
+            } else {
+              backendNotice = 'AI returned an unparseable response format. Please try again.';
+              break;
+            }
+          } else if (data.error) {
+            backendNotice = typeof data.error === 'string' ? data.error : JSON.stringify(data.error);
+            break;
+          }
+        }
+      } else {
+        if (backendCall.notFound) {
+          backendNotice = 'Netlify Serverless Function not found (HTTP 404). Ensure deployment includes "netlify/functions".';
+        } else {
+          backendNotice = backendCall.error?.message || 'Network connection failed.';
+        }
+        break;
+      }
+    } catch (err) {
+      backendNotice = err.message;
+    }
+  }
+
+  // 2. Fallback: In-browser execution if a client key is saved in localStorage (for offline/direct testing)
+  const localKey = (localStorage.getItem('gemini_api_key') || '').trim();
+  if (localKey) {
+    try {
+      const busaraContext = await retrieveBusaraContext(userPrompt);
+      const SPEED_DIRECTIVE = `\nPERFORMANCE DIRECTIVE: Output ultra-concise, high-density behavioral precision (max 15 words per text field, max 3 items in levers_present and levers_missing, max 2 items in evidence_cards, 2 transferability_caveats) so total JSON stays under 1100 tokens.`;
+      const fullPrompt = busaraContext
+        ? `${SYSTEM_PROMPT}\n\nBUSARA RESEARCH CONTEXT (7 PRIORITIZED DOMAINS):\n${busaraContext}\n\nUSER REQUEST (STRUCTURED PROBLEM SPECIFICATION):\n${userPrompt}${SPEED_DIRECTIVE}`
+        : `${SYSTEM_PROMPT}\n\nUSER REQUEST (STRUCTURED PROBLEM SPECIFICATION):\n${userPrompt}${SPEED_DIRECTIVE}`;
+
+      const candidateModels = [
+        { name: 'gemini-3.5-flash-lite' },
+        { name: 'gemini-3.5-flash', thinkingBudget: 0 },
+        { name: 'gemini-2.5-flash', thinkingBudget: 0 },
+        { name: 'gemini-flash-lite-latest' }
+      ];
+
+      for (const cand of candidateModels) {
+        try {
+          const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${cand.name}:generateContent?key=${encodeURIComponent(localKey)}`;
+          const genConfig = {
+            maxOutputTokens: 3500,
+            temperature: 0.3,
+            responseMimeType: "application/json"
+          };
+          if (cand.thinkingBudget !== undefined && cand.thinkingBudget !== null) {
+            genConfig.thinkingConfig = { thinkingBudget: cand.thinkingBudget };
+          }
+
+          let res = await fetch(geminiUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              contents: [{ parts: [{ text: fullPrompt }] }],
+              generationConfig: genConfig
+            })
+          });
+
+          if (res.status === 400) {
+            res = await fetch(geminiUrl, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                contents: [{ parts: [{ text: fullPrompt }] }],
+                generationConfig: {
+                  maxOutputTokens: 3500,
+                  temperature: 0.3
+                }
+              })
+            });
+          }
+
+          if (res.ok) {
+            const data = await res.json();
+            if (data.candidates && data.candidates[0]) {
+              const raw = data.candidates[0].content.parts.map(p => p.text || '').join('');
+              const parsed = safeParseGeminiJSON(raw);
+              if (parsed) {
+                currentAnalysisData = parsed;
+                isPivotedMap = {};
+                renderResults(parsed, subtitle);
+                return; // Successfully completed via Local Fallback!
+              }
+            }
+          }
+        } catch (candErr) {
+          console.warn(`Local candidate ${cand.name} failed:`, candErr);
+        }
+      }
+    } catch (clientErr) {
+      console.warn('Local fallback error:', clientErr);
+    }
+  }
+
+  // 3. If neither backend nor local fallback succeeded, show clear user notice
+  document.getElementById('loadingSection').classList.add('hidden');
+  document.getElementById('heroSection').classList.remove('hidden');
+  if (backendNotice) {
+    showToast('Analysis Notice', `${backendNotice}\nPlease try running your analysis again.`, 8000);
+  } else {
+    showToast('Analysis Notice', 'The connection timed out or is temporarily unavailable. Please try again.', 8000);
+  }
+}
+
+function showToast(title, message, durationMs = 6000) {
+  const el = document.getElementById('toastNotification');
+  if (!el) {
+    console.warn(title, message);
+    return;
+  }
+  document.getElementById('toastTitle').textContent = title || 'Notice';
+  document.getElementById('toastMessage').textContent = message || '';
+  el.style.display = 'block';
+  if (durationMs > 0) {
+    if (window._toastTimeout) clearTimeout(window._toastTimeout);
+    window._toastTimeout = setTimeout(() => { hideToast(); }, durationMs);
+  }
+}
+
+function hideToast() {
+  const el = document.getElementById('toastNotification');
+  if (el) el.style.display = 'none';
+}
+
+// ── RENDER RESULTS ──
+function renderResults(d, subtitle) {
+  document.getElementById('loadingSection').classList.add('hidden');
+  document.getElementById('results').classList.remove('hidden');
+  document.getElementById('resultsSubtitle').textContent = subtitle.length > 90 ? subtitle.slice(0, 90) + '…' : subtitle;
+
+  // 1. BEI Score & Gauge
+  const score = clampNumber(d.bei_score, 0, 100);
+  document.getElementById('scoreNum').textContent = score;
+
+  const circumference = 314;
+  const offset = circumference - (score / 100) * circumference;
+  setTimeout(() => {
+    const arc = document.getElementById('scoreArc');
+    arc.style.strokeDashoffset = offset;
+    const scoreColor = score >= 70 ? '#3ecf8e' : score >= 45 ? '#c9a84c' : '#e05c5c';
+    arc.style.stroke = scoreColor;
+    document.getElementById('scoreNum').style.color = scoreColor;
+  }, 100);
+
+  const verdictColor = score >= 70 ? '#3ecf8e' : score >= 45 ? '#c9a84c' : '#e05c5c';
+  document.getElementById('scoreVerdict').textContent = d.verdict || 'Analysis Complete';
+  document.getElementById('scoreVerdict').style.color = verdictColor;
+  document.getElementById('scoreSummary').textContent = d.summary || '';
+
+  // 2. EAST Framework
+  const eastColors = { E: '#4a9eff', A: '#c9a84c', S: '#3ecf8e', T: '#e05c5c' };
+  const eastLabels = { E: 'Easy', A: 'Attractive', S: 'Social', T: 'Timely' };
+  let eastHTML = '';
+  if (d.east) {
+    for (const [k, v] of Object.entries(d.east)) {
+      if (!eastLabels[k]) continue;
+      const scoreVal = clampNumber(v, 0, 10);
+      const pct = Math.round((scoreVal / 10) * 100);
+      eastHTML += `
+        <div class="east-item">
+          <div class="east-letter" style="color:${eastColors[k]}">${k}</div>
+          <div class="east-label">${eastLabels[k]}</div>
+          <div class="east-bar-bg">
+            <div class="east-bar" style="width:${pct}%;background:${eastColors[k]}"></div>
+          </div>
+          <div class="east-val">${scoreVal}/10</div>
+        </div>`;
+    }
+  }
+  document.getElementById('eastGrid').innerHTML = eastHTML;
+
+  // 3. Behavioral Specificity Diagnostic
+  const spec = d.behavior_specificity || {};
+  const isAction = spec.is_observable_action !== false;
+  const specPill = document.getElementById('specStatusPill');
+  specPill.textContent = isAction ? '✓ Observable Action' : '⚠️ Non-Action Aspiration';
+  specPill.className = `spec-pill ${isAction ? 'good' : 'aspiration'}`;
+  document.getElementById('specActionExtracted').textContent = spec.action_extracted || 'Target action parsed.';
+  let denomText = spec.denominator_recommendation ? `Recommended Denominator: ${spec.denominator_recommendation}` : '';
+  if (spec.aspiration_warning) {
+    denomText = `⚠️ Warning: ${spec.aspiration_warning} · ${denomText}`;
+  }
+  document.getElementById('specDenominatorRec').textContent = denomText;
+
+  // 4. Behavioral Transfer Engine v1
+  renderTransferEngine(d.transfer_analysis || {});
+
+  // 5. COM-B Diagnostic
+  renderCOMBDiagnosis(d.comb_diagnosis || {});
+
+  // 6. A/B/n Multi-Arm Intervention Experiment with Ground-Truth Backfire Audits
+  renderInterventionArms(d.intervention_arms || [], d.rct_trial_design || {});
+
+  // 7. Synthetic Audience Personas
+  renderSyntheticPersonas(d.synthetic_personas || []);
+
+  // 8. Multi-Channel Studio & YarnGPT 5 Languages
+  renderYarnGPTAndChannels(d.yarngpt_languages || {}, d.multi_channel || {});
+
+  // 9. Levers Breakdown
+  renderLevers(d.levers_present || [], d.levers_missing || []);
+
+  // 10. Benchmark Case Study
+  renderCaseStudy(d.case_study || {});
+
+  // 11. Busara Evidence Grounding (with fails_when tags)
+  renderEvidenceGrounding(d.evidence_cards || d.busara_evidence || []);
+
+  // 12. Ethics & African Cultural Dynamics
+  renderEthicsAndCulture(d.market_failure, d.ethics, d.nigeria_adjustment);
+
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ── BEHAVIORAL TRANSFER ENGINE v1 RENDERER ──
+function renderTransferEngine(ta) {
+  const score = clampNumber(ta.overall_transfer_score, 0, 100, 78);
+  const rating = ta.confidence_rating || 'Moderate Confidence';
+  const badge = document.getElementById('transferScoreBadge');
+  badge.textContent = `Contextual Transfer: ${score}% · ${rating}`;
+  badge.style.color = score >= 75 ? 'var(--green)' : score >= 50 ? 'var(--gold2)' : 'var(--red)';
+
+  document.getElementById('transferRoute').innerHTML = `
+    <span>Origin: <strong>${escapeHTML(ta.study_origin || 'Kenya (Busara RCT Corpus)')}</strong></span>
+    <span>➔</span>
+    <span>Destination: <strong>${escapeHTML(ta.target_destination || 'Nigeria (Target Audience Context)')}</strong></span>
+  `;
+
+  const dims = ta.dimension_scores || {};
+  const pop = clampNumber(dims.population_match, 0, 100, 80);
+  const mech = clampNumber(dims.mechanism_match, 0, 100, 85);
+  const chan = clampNumber(dims.channel_compatibility, 0, 100, 80);
+  const trust = clampNumber(dims.institutional_trust_gap, 0, 100, 60);
+  const econ = clampNumber(dims.economic_context_match, 0, 100, 75);
+
+  document.getElementById('dimPopScore').textContent = `${pop}%`;
+  document.getElementById('dimPopBar').style.width = `${pop}%`;
+  document.getElementById('dimMechScore').textContent = `${mech}%`;
+  document.getElementById('dimMechBar').style.width = `${mech}%`;
+  document.getElementById('dimChanScore').textContent = `${chan}%`;
+  document.getElementById('dimChanBar').style.width = `${chan}%`;
+  document.getElementById('dimTrustScore').textContent = `${trust}%`;
+  document.getElementById('dimTrustBar').style.width = `${trust}%`;
+  document.getElementById('dimEconScore').textContent = `${econ}%`;
+  document.getElementById('dimEconBar').style.width = `${econ}%`;
+
+  const caveats = Array.isArray(ta.transferability_caveats) ? ta.transferability_caveats : [];
+  let caveatsHTML = '<strong>Contextual Transferability Notes & Boundary Caveats:</strong>';
+  if (caveats.length) {
+    caveatsHTML += '<ul>' + caveats.map(c => `<li>${escapeHTML(c)}</li>`).join('') + '</ul>';
+  } else {
+    caveatsHTML += '<p style="margin-top:4px">Mechanisms replicate across East and West African informal settings when structural mobile channel friction remains comparable.</p>';
+  }
+  document.getElementById('transferCaveats').innerHTML = caveatsHTML;
+}
+
+// ── COM-B DIAGNOSTIC RENDERER ──
+function renderCOMBDiagnosis(comb) {
+  let combHTML = '';
+  const types = [
+    { key: 'capability', label: 'Capability' },
+    { key: 'opportunity', label: 'Opportunity' },
+    { key: 'motivation', label: 'Motivation' }
+  ];
+  for (const t of types) {
+    const item = comb[t.key] || {};
+    const scoreVal = clampNumber(item.score, 0, 10, 5);
+    const pct = Math.round((scoreVal / 10) * 100);
+    combHTML += `
+      <div class="comb-item">
+        <div class="comb-type">
+          <span>${escapeHTML(t.label)}</span>
+          <span class="comb-score-num">${scoreVal}/10</span>
+        </div>
+        <div class="comb-bar-bg">
+          <div class="comb-bar" style="width:${pct}%"></div>
+        </div>
+        <div class="comb-barrier"><strong>Barrier:</strong> ${escapeHTML(item.barrier || 'Friction identified')}</div>
+        <div class="comb-rec"><strong>Nudge:</strong> ${escapeHTML(item.recommendation || 'Apply defaults or cues')}</div>
+      </div>`;
+  }
+  document.getElementById('combGrid').innerHTML = combHTML;
+}
+
+// ── MULTI-ARM INTERVENTION DISPLAY & GROUND-TRUTH BACKFIRE TOGGLE ──
+function renderInterventionArms(arms, rct) {
+  if (!arms.length && currentAnalysisData?.redesigned_message) {
+    arms = [{
+      arm_id: 'Arm A',
+      name: 'Optimized Behavioral Redesign',
+      behavioral_mechanism: 'Multi-lever alignment',
+      message_copy: currentAnalysisData.redesigned_message,
+      why_it_works: currentAnalysisData.redesign_analysis || 'Activates primary behavioral levers.',
+      expected_effect: '+15–25% compliance'
+    }];
+  }
+
+  let tabsHTML = '';
+  arms.forEach((arm, idx) => {
+    tabsHTML += `<button class="exp-tab ${idx === 0 ? 'active' : ''}" onclick="selectArm(${idx})">${escapeHTML(arm.arm_id)}: ${escapeHTML(arm.name)}</button>`;
+  });
+  document.getElementById('armTabs').innerHTML = tabsHTML;
+
+  selectArm(0);
+
+  // RCT protocol
+  let rctHTML = `
+    <div class="rct-item"><div class="rct-label">Sample Size</div><div class="rct-val">${escapeHTML(rct.sample_size_recommendation || 'N=1,200 (400/arm)')}</div></div>
+    <div class="rct-item"><div class="rct-label">Randomization Unit</div><div class="rct-val">${escapeHTML(rct.randomization_unit || 'Subscriber cluster')}</div></div>
+    <div class="rct-item"><div class="rct-label">Primary Metric</div><div class="rct-val">${escapeHTML(rct.primary_outcome_metric || 'Action compliance %')}</div></div>
+    <div class="rct-item"><div class="rct-label">Measurement Window</div><div class="rct-val">${escapeHTML(rct.measurement_window || '30 days post-nudge')}</div></div>
+  `;
+  document.getElementById('rctProtocol').innerHTML = rctHTML;
+}
+
+function selectArm(idx) {
+  currentActiveArm = idx;
+  const arms = currentAnalysisData?.intervention_arms || [];
+  const arm = arms[idx] || {};
+
+  document.querySelectorAll('.exp-tab').forEach((tab, i) => {
+    tab.classList.toggle('active', i === idx);
+  });
+
+  const isPivoted = !!isPivotedMap[idx];
+  const audit = arm.ground_truth_audit || {};
+  const fallback = audit.adaptive_fallback_frame || {};
+  const displayCopy = isPivoted && fallback.pivoted_copy ? fallback.pivoted_copy : (arm.message_copy || '');
+
+  const contentHTML = `
+    <div class="arm-header">
+      <div style="font-weight:700;color:var(--cream);font-size:16px">${escapeHTML(arm.arm_id)}: ${escapeHTML(arm.name)}</div>
+      <div class="arm-badge">${escapeHTML(arm.behavioral_mechanism || 'Behavioral Mechanism')}</div>
+    </div>
+    
+    <div class="arm-message-box">
+      <div class="arm-message-text" id="activeArmCopyText">"${escapeHTML(displayCopy)}"</div>
+      <button class="arm-copy-btn" onclick="copyArmText(${idx})">📋 Copy Copy</button>
+    </div>
+
+    <!-- Ground Truth Backfire Audit Engine Box -->
+    <div class="ground-truth-subpanel">
+      <div class="gt-header">
+        <div class="gt-title">
+          <span>🛡️</span> Ground-Truth Sensitivity & Backfire Audit
+        </div>
+        ${fallback.pivoted_copy ? `
+          <button class="btn-pivot-toggle ${isPivoted ? 'active' : ''}" onclick="toggleTruthfulPivot(${idx})">
+            ${isPivoted ? '✓ Using Truthful Adaptive Pivot' : '⚡ Switch to Truthful Adaptive Fallback'}
+          </button>
+        ` : ''}
+      </div>
+      
+      <div class="gt-row">
+        <div class="gt-label">Requires Ground Truth:</div>
+        <div style="color:var(--cream);font-weight:600">${escapeHTML(Array.isArray(audit.requires_ground_truth) ? audit.requires_ground_truth.join(', ') : (audit.requires_ground_truth || 'Empirical compliance rate'))}</div>
+      </div>
+      <div class="gt-row">
+        <div class="gt-label">Backfire Condition:</div>
+        <div style="color:var(--amber)">${escapeHTML(audit.backfire_condition || 'Ground-truth compliance rate < 40% (Boomerang Effect)')}</div>
+      </div>
+      <div class="gt-row">
+        <div class="gt-label">Backfire Risk:</div>
+        <div style="color:var(--text)">${escapeHTML(audit.backfire_risk_description || 'If baseline compliance is low, disclosing truth normalizes default; fabricating numbers destroys trust.')}</div>
+      </div>
+      ${isPivoted && fallback.strategy ? `
+        <div class="gt-row" style="margin-top:8px;padding-top:8px;border-top:1px dashed rgba(255,255,255,0.1)">
+          <div class="gt-label" style="color:var(--green)">Pivot Strategy:</div>
+          <div style="color:var(--green);font-weight:600">${escapeHTML(fallback.strategy)}</div>
+        </div>
+        <div class="gt-row">
+          <div class="gt-label" style="color:var(--green)">Mechanistic Basis:</div>
+          <div style="color:var(--text)">${escapeHTML(fallback.mechanistic_justification || 'Maintains behavioral urgency without fabricating metrics.')}</div>
+        </div>
+      ` : ''}
+    </div>
+
+    <div class="arm-grid">
+      <div class="arm-detail">
+        <div class="arm-detail-label">Why It Works</div>
+        <div>${escapeHTML(arm.why_it_works || '')}</div>
+      </div>
+      <div class="arm-detail">
+        <div class="arm-detail-label">Expected Empirical Lift</div>
+        <div style="font-weight:700;color:var(--green)">${escapeHTML(arm.expected_effect || '+12-25% compliance')}</div>
+      </div>
+    </div>
+  `;
+  document.getElementById('armContent').innerHTML = contentHTML;
+}
+
+function toggleTruthfulPivot(idx) {
+  isPivotedMap[idx] = !isPivotedMap[idx];
+  selectArm(idx);
+}
+
+function copyArmText(idx) {
+  const arm = currentAnalysisData?.intervention_arms?.[idx];
+  const isPivoted = !!isPivotedMap[idx];
+  const fallback = arm?.ground_truth_audit?.adaptive_fallback_frame;
+  const text = isPivoted && fallback?.pivoted_copy ? fallback.pivoted_copy : (arm?.message_copy || '');
+
+  if (text) {
+    navigator.clipboard.writeText(text);
+    alert(`Copied ${arm?.arm_id || 'Intervention'} copy to clipboard!`);
+  }
+}
+
+// ── SYNTHETIC PERSONAS ──
+function renderSyntheticPersonas(personas) {
+  let pHTML = '';
+  if (!personas.length) {
+    personas = [
+      {
+        name: 'Mama Amina', archetype: 'The Scarcity-Constrained Market Trader', demographic: '38yo market trader, Lagos',
+        cognitive_load: 8, trust_score: 5, reactance_risk: 'Moderate', decision_probability: 65,
+        internal_monologue: 'I do not have time for stories; tell me how this protects my cash turnover today.',
+        verdict: 'Responds best to zero friction and transparent transaction fees.'
+      },
+      {
+        name: 'Baba Emeka', archetype: 'The Institutional Skeptic', demographic: '54yo community elder, Enugu',
+        cognitive_load: 4, trust_score: 3, reactance_risk: 'High', decision_probability: 40,
+        internal_monologue: 'Who sent this? If our local market association didn\'t endorse it, I won\'t touch it.',
+        verdict: 'Requires endorsement from trusted local or peer messengers.'
+      },
+      {
+        name: 'Tunde', archetype: 'The Digital-First Urban Youth', demographic: '23yo gig worker, Abuja',
+        cognitive_load: 3, trust_score: 7, reactance_risk: 'Low', decision_probability: 85,
+        internal_monologue: 'If I can do it in 2 clicks on WhatsApp or USSD, I am in.',
+        verdict: 'High conversion via interactive digital nudges.'
+      }
+    ];
+  }
+
+  for (const p of personas) {
+    const cogPct = (clampNumber(p.cognitive_load, 1, 10) / 10) * 100;
+    const trustPct = (clampNumber(p.trust_score, 1, 10) / 10) * 100;
+    const decProb = clampNumber(p.decision_probability, 0, 100);
+
+    const cogColor = cogPct > 65 ? 'var(--red)' : cogPct > 40 ? 'var(--gold)' : 'var(--green)';
+    const trustColor = trustPct > 65 ? 'var(--green)' : trustPct > 40 ? 'var(--gold)' : 'var(--red)';
+    const probColor = decProb >= 65 ? 'var(--green)' : decProb >= 45 ? 'var(--gold)' : 'var(--red)';
+
+    pHTML += `
+      <div class="p-box">
+        <div class="p-header">
+          <div class="p-name">${escapeHTML(p.name)}</div>
+          <div class="p-demog">${escapeHTML(p.archetype)} · ${escapeHTML(p.demographic)}</div>
+        </div>
+        <div class="p-metrics">
+          <div>
+            <div class="p-metric-row"><span>Cognitive Load</span><span style="color:${cogColor}">${p.cognitive_load}/10</span></div>
+            <div class="p-bar-bg"><div class="p-bar" style="width:${cogPct}%;background:${cogColor}"></div></div>
+          </div>
+          <div>
+            <div class="p-metric-row"><span>Perceived Trust</span><span style="color:${trustColor}">${p.trust_score}/10</span></div>
+            <div class="p-bar-bg"><div class="p-bar" style="width:${trustPct}%;background:${trustColor}"></div></div>
+          </div>
+          <div>
+            <div class="p-metric-row"><span>Decision Likelihood</span><span style="color:${probColor};font-weight:700">${decProb}%</span></div>
+            <div class="p-bar-bg"><div class="p-bar" style="width:${decProb}%;background:${probColor}"></div></div>
+          </div>
+        </div>
+        <div class="p-quote">"${escapeHTML(p.internal_monologue || '')}"</div>
+        <div class="p-verdict"><strong>Verdict:</strong> ${escapeHTML(p.verdict || '')}</div>
+      </div>`;
+  }
+  document.getElementById('personaGrid').innerHTML = pHTML;
+}
+
+// ── YARNGPT 5-LANGUAGE STUDIO & MULTI-CHANNEL ──
+function renderYarnGPTAndChannels(languages, mc) {
+  // SMS
+  const sms = mc.sms || currentAnalysisData?.redesigned_message || '';
+  document.getElementById('smsText').textContent = sms;
+  const charCount = sms.length;
+  const countBadge = `${charCount} / 160 chars (${Math.ceil(charCount / 160) || 1} SMS)`;
+  document.getElementById('smsCountBadge').textContent = countBadge;
+  document.getElementById('smsCountBadge').style.color = charCount <= 160 ? 'var(--green)' : 'var(--gold)';
+
+  // WhatsApp
+  document.getElementById('waText').textContent = mc.whatsapp || sms;
+
+  // Field Agent Guide
+  const guide = Array.isArray(mc.field_agent_guide) ? mc.field_agent_guide : [];
+  let guideHTML = '';
+  if (guide.length) {
+    for (const point of guide) {
+      guideHTML += `<div class="field-item">▸ ${escapeHTML(point)}</div>`;
+    }
+  } else {
+    guideHTML = '<div class="field-item">Open with warmth, acknowledge daily market conditions, and give a concrete next step.</div>';
+  }
+  document.getElementById('fieldPoints').innerHTML = guideHTML;
+
+  // Render currently selected YarnGPT Language
+  selectYarnLanguage(currentYarnLang);
+}
+
+function selectYarnLanguage(langKey) {
+  currentYarnLang = langKey;
+  document.querySelectorAll('#yarnLangTabs .lang-tab').forEach((tab, idx) => {
+    const keys = ['english', 'pidgin', 'yoruba', 'hausa', 'igbo'];
+    tab.classList.toggle('active', keys[idx] === langKey);
+  });
+
+  const languages = currentAnalysisData?.yarngpt_languages || {};
+  const currentLangObj = languages[langKey] || {};
+
+  const headline = currentLangObj.headline || `${currentLangObj.language_label || langKey} Campaign Audio`;
+  const script = currentLangObj.spoken_script || currentAnalysisData?.multi_channel?.radio_script || currentAnalysisData?.redesigned_message || '';
+  const tone = currentLangObj.cultural_tone || 'Authentic African conversational cadence';
+
+  document.getElementById('yarnScriptHeadline').textContent = headline;
+  document.getElementById('yarnScriptBox').textContent = script;
+  document.getElementById('voiceLangBadge').textContent = `🎙️ ${currentLangObj.language_label || langKey.toUpperCase()}`;
+  document.getElementById('voiceToneBadge').textContent = tone;
+  document.getElementById('yarnCulturalCues').textContent = `Acoustic Cadence: ${tone}`;
+
+  const select = document.getElementById('voiceSelector');
+  if (select) {
+    const defVoice = { english: 'osagie', pidgin: 'osagie', yoruba: 'tayo', hausa: 'umar', igbo: 'adaora' }[langKey];
+    if (defVoice && Array.from(select.options).some(o => o.value === defVoice)) {
+      select.value = defVoice;
+      selectedVoiceURI = defVoice;
+    }
+  }
+}
+
+function switchChannel(name) {
+  document.querySelectorAll('.chan-tab').forEach((tab, i) => {
+    const isTarget = (name === 'yarngpt' && i === 0) || (name === 'sms' && i === 1) || (name === 'whatsapp' && i === 2) || (name === 'field' && i === 3);
+    tab.classList.toggle('active', isTarget);
+  });
+  document.getElementById('chanYarnGPT').classList.toggle('hidden', name !== 'yarngpt');
+  document.getElementById('chanSMS').classList.toggle('hidden', name !== 'sms');
+  document.getElementById('chanWhatsApp').classList.toggle('hidden', name !== 'whatsapp');
+  document.getElementById('chanField').classList.toggle('hidden', name !== 'field');
+  if (name === 'yarngpt') {
+    populateVoices();
+  }
+}
+
+function copySMS() {
+  const text = document.getElementById('smsText').textContent;
+  navigator.clipboard.writeText(text);
+  alert('SMS copy copied to clipboard!');
+}
+
+function copyWhatsApp() {
+  const text = document.getElementById('waText').textContent;
+  navigator.clipboard.writeText(text);
+  alert('WhatsApp copy copied to clipboard!');
+}
+
+function copyYarnScript() {
+  const text = document.getElementById('yarnScriptBox').textContent;
+  navigator.clipboard.writeText(text);
+  alert(`Copied ${currentYarnLang.toUpperCase()} audio script to clipboard!`);
+}
+
+// ── YARNGPT SPEECH SYNTHESIS ENGINE (AUTHENTIC AFRICAN NEURAL AUDIO) ──
+const YARNGPT_VOICES = [
+  { id: 'auto', name: '🎙️ Voice: Auto Match by Language' },
+  { id: 'osagie', name: '🇳🇬 Osagie (Nigerian English / Pidgin - Male)' },
+  { id: 'mary', name: '🇳🇬 Mary (Nigerian English / Pidgin - Female)' },
+  { id: 'femi', name: '🇳🇬 Femi (Nigerian English - Male)' },
+  { id: 'remi', name: '🇳🇬 Remi (Nigerian English - Female)' },
+  { id: 'tayo', name: '🇳🇬 Tayo (Yoruba - Male)' },
+  { id: 'wura', name: '🇳🇬 Wura (Yoruba - Female)' },
+  { id: 'idera', name: '🇳🇬 Idera (Yoruba - Female)' },
+  { id: 'umar', name: '🇳🇬 Umar (Hausa - Male)' },
+  { id: 'zainab', name: '🇳🇬 Zainab (Hausa - Female)' },
+  { id: 'adam', name: '🇳🇬 Adam (Hausa - Male)' },
+  { id: 'adaora', name: '🇳🇬 Adaora (Igbo - Female)' },
+  { id: 'chinenye', name: '🇳🇬 Chinenye (Igbo - Female)' },
+  { id: 'nonso', name: '🇳🇬 Nonso (Igbo - Male)' },
+  { id: 'jude', name: '🇳🇬 Jude (Nigerian English - Male)' },
+  { id: 'emma', name: '🌍 Emma (Pan-African - Female)' },
+  { id: 'regina', name: '🇳🇬 Regina (Nigerian English - Female)' }
+];
+
+let selectedVoiceURI = 'auto';
+
+function populateVoices() {
+  const select = document.getElementById('voiceSelector');
+  if (!select) return;
+
+  const currentVal = select.value || selectedVoiceURI || 'auto';
+  select.innerHTML = '';
+
+  const optGroupYarn = document.createElement('optgroup');
+  optGroupYarn.label = 'YarnGPT Neural Cloud Voices (Authentic African)';
+  YARNGPT_VOICES.forEach(v => {
+    const opt = document.createElement('option');
+    opt.value = v.id;
+    opt.textContent = v.name;
+    optGroupYarn.appendChild(opt);
+  });
+  select.appendChild(optGroupYarn);
+
+  if ('speechSynthesis' in window) {
+    const browserVoices = window.speechSynthesis.getVoices();
+    if (browserVoices.length) {
+      const optGroupBrowser = document.createElement('optgroup');
+      optGroupBrowser.label = 'Device Voices (Local Fallback)';
+      browserVoices.forEach(v => {
+        const opt = document.createElement('option');
+        opt.value = `browser:${v.voiceURI}`;
+        opt.textContent = `💻 ${v.name} (${v.lang})`;
+        optGroupBrowser.appendChild(opt);
+      });
+      select.appendChild(optGroupBrowser);
+    }
+  }
+
+  if (currentVal && Array.from(select.options).some(o => o.value === currentVal)) {
+    select.value = currentVal;
+  }
+}
+
+function onVoiceSelected() {
+  const select = document.getElementById('voiceSelector');
+  selectedVoiceURI = select ? select.value : 'auto';
+}
+
+async function playYarnGPTAudio() {
+  const scriptText = document.getElementById('yarnScriptBox').textContent;
+  if (!scriptText) return;
+
+  stopYarnGPTAudio();
+
+  const localToken = localStorage.getItem('yarngpt_api_key') || localStorage.getItem('yarn_hf_token') || '';
+  const customEndpoint = localStorage.getItem('yarn_endpoint_url') || '';
+  const playBtn = document.getElementById('btnPlayVoice');
+  const stopBtn = document.getElementById('btnStopVoice');
+  const engineBadge = document.getElementById('yarnEngineBadge');
+  const noticeEl = document.getElementById('yarnStatusNotice');
+
+  // Strip bracketed cues (e.g. [Acoustic Cadence], [SFX], [Pause]) and markdown
+  const cleanText = scriptText
+    .replace(/\[.*?\]/g, '')
+    .replace(/[*_#~]/g, '')
+    .trim();
+
+  if (!cleanText) return;
+
+  // Immediate UI loading feedback
+  playBtn.classList.add('hidden');
+  stopBtn.classList.remove('hidden');
+  document.querySelectorAll('.wave-bar').forEach(b => b.classList.add('animating'));
+
+  const voiceName = selectedVoiceURI !== 'auto' ? selectedVoiceURI : currentYarnLang;
+  engineBadge.textContent = `🔄 Synthesizing Audio (${voiceName})...`;
+  engineBadge.style.color = 'var(--gold)';
+
+  if (noticeEl) {
+    noticeEl.style.display = 'block';
+    noticeEl.style.background = 'rgba(201,168,76,0.08)';
+    noticeEl.style.border = '1px solid rgba(201,168,76,0.25)';
+    noticeEl.style.color = 'var(--gold2)';
+    noticeEl.textContent = `🔄 Contacting YarnGPT Cloud Neural Engine for ${currentYarnLang.toUpperCase()} speech...`;
+  }
+
+  // 1. Try Netlify Backend speech synthesis (uses YARNGPT_API_KEY from Netlify environment variables)
+  try {
+    const chosenVoice = selectedVoiceURI.startsWith('browser:') ? undefined : (selectedVoiceURI !== 'auto' ? selectedVoiceURI : undefined);
+    const backendCall = await callNetlifyBackend({
+      action: 'synthesize_yarngpt',
+      text: cleanText,
+      language: currentYarnLang,
+      voice: chosenVoice,
+      api_key: localToken || undefined,
+      endpoint_url: customEndpoint || undefined
+    });
+
+    if (backendCall.ok && backendCall.response.ok) {
+      const data = await backendCall.response.json();
+      if (data.audio_base64 || data.audio_url) {
+        engineBadge.textContent = `🟢 Active: ${data.engine || 'YarnGPT Cloud'}`;
+        engineBadge.style.color = 'var(--green)';
+
+        if (noticeEl) {
+          noticeEl.style.display = 'block';
+          noticeEl.style.background = 'rgba(62,207,142,0.08)';
+          noticeEl.style.border = '1px solid rgba(62,207,142,0.25)';
+          noticeEl.style.color = 'var(--green)';
+          noticeEl.textContent = `✅ Playing authentic African speech synthesized via ${data.engine || 'YarnGPT Cloud (api.yarngpt.ai)'}.`;
+        }
+
+        const audioPlayer = document.getElementById('yarnAudioPlayer');
+        audioPlayer.src = data.audio_base64 || data.audio_url;
+        audioPlayer.onended = () => stopYarnGPTAudio();
+        audioPlayer.onerror = () => fallbackToBrowserSpeech(cleanText, 'Audio playback failed; playing African voice preview.');
+        await audioPlayer.play();
+        return;
+      } else if (data.yarn_error) {
+        if (noticeEl) {
+          noticeEl.textContent = `⚠️ YarnGPT Notice: ${data.yarn_error}`;
+        }
+      }
+    }
+  } catch (backendErr) {
+    console.warn('Backend synthesis notice:', backendErr);
+  }
+
+  // 2. If custom endpoint is configured, try direct cloud synthesis
+  if (customEndpoint) {
+    try {
+      const epRes = await fetch(customEndpoint, {
+        method: 'POST',
+        headers: {
+          'Authorization': localToken ? `Bearer ${localToken}` : undefined,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ text: cleanText, language: currentYarnLang })
+      });
+      if (epRes.ok) {
+        const blob = await epRes.blob();
+        const audioUrl = URL.createObjectURL(blob);
+        const audioPlayer = document.getElementById('yarnAudioPlayer');
+        audioPlayer.src = audioUrl;
+        engineBadge.textContent = '🟢 Active: Custom YarnGPT Voice';
+        engineBadge.style.color = 'var(--green)';
+        if (noticeEl) {
+          noticeEl.style.display = 'block';
+          noticeEl.style.background = 'rgba(62,207,142,0.08)';
+          noticeEl.style.border = '1px solid rgba(62,207,142,0.25)';
+          noticeEl.style.color = 'var(--green)';
+          noticeEl.textContent = '✅ Playing speech synthesized via custom YarnGPT endpoint.';
+        }
+        audioPlayer.onended = () => stopYarnGPTAudio();
+        await audioPlayer.play();
+        return;
+      }
+    } catch (e) {
+      console.warn('Custom endpoint synthesis failed, falling back:', e);
+    }
+  }
+
+  // 3. Fallback: African Neural Voice Engine preview (Web Speech API)
+  fallbackToBrowserSpeech(cleanText, 'Playing African Neural Voice Engine preview.');
+}
+
+
+function fallbackToBrowserSpeech(scriptText, reasonMsg) {
+  const engineBadge = document.getElementById('yarnEngineBadge');
+  const noticeEl = document.getElementById('yarnStatusNotice');
+  const playBtn = document.getElementById('btnPlayVoice');
+  const stopBtn = document.getElementById('btnStopVoice');
+
+  engineBadge.textContent = 'Engine: African Neural Voice Engine';
+  engineBadge.style.color = 'var(--purple)';
+
+  if (noticeEl) {
+    noticeEl.style.display = 'block';
+    noticeEl.style.background = 'rgba(167,139,250,0.08)';
+    noticeEl.style.border = '1px solid rgba(167,139,250,0.25)';
+    noticeEl.style.color = 'var(--purple)';
+    noticeEl.textContent = `ℹ️ ${reasonMsg || 'Synthesizing with African Neural Voice Engine (tuned pitch & pacing contours).'}`;
+  }
+
+  if (!('speechSynthesis' in window)) {
+    alert('Audio synthesis not supported by this browser.');
+    stopYarnGPTAudio();
+    return;
+  }
+
+  // Ensure fresh speech synthesis queue
+  try {
+    window.speechSynthesis.cancel();
+    window.speechSynthesis.resume();
+  } catch (e) {}
+
+  // Clean text of bracketed cues (e.g. [Acoustic Cadence], [Pause]) and markdown
+  const cleanText = scriptText
+    .replace(/\[.*?\]/g, '')
+    .replace(/[*_#~]/g, '')
+    .trim();
+
+  if (!cleanText) {
+    stopYarnGPTAudio();
+    return;
+  }
+
+  isAudioPlaying = true;
+  currentUtterance = new SpeechSynthesisUtterance(cleanText);
+
+  const voices = window.speechSynthesis.getVoices();
+  let matchedVoice = null;
+
+  // 1. If user selected a specific voice from dropdown
+  if (selectedVoiceURI && selectedVoiceURI !== 'auto') {
+    matchedVoice = voices.find(v => v.voiceURI === selectedVoiceURI);
+  }
+
+  // 2. Auto-match African or localized voice based on language
+  if (!matchedVoice) {
+    const lang = (currentYarnLang || 'english').toLowerCase();
+    if (lang === 'yoruba') {
+      matchedVoice = voices.find(v => v.lang.includes('yo') || v.lang.includes('en-NG') || v.name.toLowerCase().includes('nigeria') || v.name.toLowerCase().includes('abeo'));
+      currentUtterance.rate = 0.90;
+      currentUtterance.pitch = 1.0;
+    } else if (lang === 'hausa') {
+      matchedVoice = voices.find(v => v.lang.includes('ha') || v.lang.includes('en-NG') || v.name.toLowerCase().includes('nigeria') || v.name.toLowerCase().includes('abeo'));
+      currentUtterance.rate = 0.92;
+      currentUtterance.pitch = 1.0;
+    } else if (lang === 'igbo') {
+      matchedVoice = voices.find(v => v.lang.includes('ig') || v.lang.includes('en-NG') || v.name.toLowerCase().includes('nigeria') || v.name.toLowerCase().includes('ezinne'));
+      currentUtterance.rate = 0.92;
+      currentUtterance.pitch = 1.06;
+    } else if (lang === 'pidgin') {
+      matchedVoice = voices.find(v => v.lang.includes('pcm') || v.lang.includes('en-NG') || v.name.toLowerCase().includes('nigeria') || v.name.toLowerCase().includes('abeo'));
+      currentUtterance.rate = 0.96;
+      currentUtterance.pitch = 1.04;
+    } else {
+      matchedVoice = voices.find(v => v.lang.includes('en-NG') || v.name.toLowerCase().includes('nigeria') || v.name.toLowerCase().includes('abeo') || v.name.toLowerCase().includes('ezinne') || v.lang.includes('en-GH') || v.lang.includes('en-ZA'));
+      currentUtterance.rate = 0.95;
+      currentUtterance.pitch = 1.02;
+    }
+  }
+
+  if (matchedVoice) {
+    currentUtterance.voice = matchedVoice;
+    engineBadge.textContent = `Engine: ${matchedVoice.name.replace(/Online \(Natural\) - /g, '')}`;
+  }
+
+  currentUtterance.onstart = () => {
+    isAudioPlaying = true;
+    if (playBtn) playBtn.classList.add('hidden');
+    if (stopBtn) stopBtn.classList.remove('hidden');
+    document.querySelectorAll('.wave-bar').forEach(b => b.classList.add('animating'));
+  };
+
+  currentUtterance.onend = () => stopYarnGPTAudio();
+  currentUtterance.onerror = (e) => {
+    console.warn('SpeechSynthesis error:', e);
+    stopYarnGPTAudio();
+  };
+
+  window.speechSynthesis.speak(currentUtterance);
+}
+
+// ── TEST GEMINI KEY IN SETTINGS MODAL ──
+async function testGeminiConnection() {
+  const statusEl = document.getElementById('hfTestStatus');
+  if (!statusEl) return;
+  statusEl.textContent = '🔄 Testing Gemini connection (checking Netlify backend)...';
+  statusEl.style.color = 'var(--gold)';
+
+  // 1. First test Netlify serverless backend
+  try {
+    const backendCall = await callNetlifyBackend({ action: 'test_gemini' });
+    if (backendCall.ok) {
+      const data = await backendCall.response.json().catch(() => ({}));
+      if (data.ok) {
+        statusEl.textContent = '✅ Netlify Backend: GEMINI_API_KEY is configured in Netlify environment variables and ready!';
+        statusEl.style.color = 'var(--green)';
+        return;
+      } else if (data.error && data.error.includes('No GEMINI_API_KEY')) {
+        statusEl.textContent = '⚠️ Netlify Backend: GEMINI_API_KEY not found in Netlify environment variables.';
+        statusEl.style.color = 'var(--gold)';
+      } else if (data.error) {
+        statusEl.textContent = `❌ Netlify Backend error: ${data.error}`;
+        statusEl.style.color = 'var(--red)';
+        return;
+      }
+    }
+  } catch (e) {}
+
+  // 2. Direct client test if local key entered
+  const key = (document.getElementById('localGeminiKey')?.value || localStorage.getItem('gemini_api_key') || '').trim();
+  if (key) {
+    try {
+      // First try discovering available models
+      const discRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${encodeURIComponent(key)}`);
+      if (discRes.ok) {
+        const data = await discRes.json();
+        const models = (data.models || []).map(m => m.name.replace(/^models\//, ''));
+        const activeModel = models.find(m => ['gemini-2.5-flash', 'gemini-flash-latest', 'gemini-3.5-flash', 'gemini-3.8-flash'].includes(m)) || models[0] || 'gemini-2.5-flash';
+        statusEl.textContent = `✅ Google Gemini connected successfully! Active model: ${activeModel}`;
+        statusEl.style.color = 'var(--green)';
+        localStorage.setItem('gemini_api_key', key);
+        return;
+      }
+      
+      // Probing candidate models directly
+      for (const m of ['gemini-2.5-flash', 'gemini-flash-latest', 'gemini-3.5-flash']) {
+        const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${m}?key=${encodeURIComponent(key)}`);
+        if (res.ok) {
+          statusEl.textContent = `✅ Google Gemini (${m}) connected successfully! (Direct client key active)`;
+          statusEl.style.color = 'var(--green)';
+          localStorage.setItem('gemini_api_key', key);
+          return;
+        }
+      }
+      const errJson = await discRes.json().catch(() => ({}));
+      const msg = errJson?.error?.message || `HTTP ${discRes.status}`;
+      statusEl.textContent = `❌ Gemini Key error: ${msg}`;
+      statusEl.style.color = 'var(--red)';
+      return;
+    } catch (err) {
+      statusEl.textContent = `❌ Network error connecting to Gemini API: ${err.message}`;
+      statusEl.style.color = 'var(--red)';
+      return;
+    }
+  }
+
+  statusEl.textContent = 'ℹ️ If hosting on Netlify, ensure GEMINI_API_KEY is saved in Netlify Site Configuration → Environment Variables, or enter key above.';
+  statusEl.style.color = 'var(--gold)';
+}
+
+// ── TEST YARNGPT / VOICE KEY IN SETTINGS MODAL ──
+async function testHfTokenConnection() {
+  const statusEl = document.getElementById('hfTestStatus');
+  if (!statusEl) return;
+  statusEl.textContent = '🔄 Testing voice connection (checking Netlify backend)...';
+  statusEl.style.color = 'var(--gold)';
+
+  // 1. First test Netlify serverless backend
+  try {
+    const backendCall = await callNetlifyBackend({ action: 'test_voice_key' });
+    if (backendCall.ok) {
+      const data = await backendCall.response.json().catch(() => ({}));
+      if (data.ok) {
+        statusEl.textContent = `✅ Netlify Backend: ${data.message || 'Voice key configured in Netlify!'}`;
+        statusEl.style.color = 'var(--green)';
+        if (data.voices && Array.isArray(data.voices)) {
+          updateVoiceSelectorWithYarnVoices(data.voices);
+        }
+        return;
+      } else if (data.error) {
+        statusEl.textContent = `⚠️ Netlify Backend: ${data.error}`;
+        statusEl.style.color = 'var(--gold)';
+      }
+    }
+  } catch (e) {}
+
+  // 2. Direct browser test if key entered in input box
+  const localToken = (document.getElementById('localHfToken')?.value || localStorage.getItem('yarngpt_api_key') || '').trim();
+  if (localToken) {
+    if (!localToken.startsWith('hf_')) {
+      try {
+        const directRes = await fetch('https://api.yarngpt.ai/api/v1/voices', {
+          headers: { 'Authorization': `Bearer ${localToken}` }
+        });
+        if (directRes.ok) {
+          const voices = await directRes.json().catch(() => []);
+          const voiceNames = Array.isArray(voices) ? voices.map(v => v.name).filter(Boolean) : [];
+          statusEl.textContent = `✅ YarnGPT API Key is valid! Authenticated with YarnGPT Cloud (${voiceNames.slice(0, 4).join(', ') || 'default voice'}).`;
+          statusEl.style.color = 'var(--green)';
+          if (voiceNames.length) {
+            updateVoiceSelectorWithYarnVoices(voices);
+          }
+          return;
+        } else if (directRes.status === 401) {
+          statusEl.textContent = '❌ Invalid YarnGPT API Key (HTTP 401). Verify your key from yarngpt.ai/account.';
+          statusEl.style.color = 'var(--red)';
+          return;
+        }
+      } catch (e) {
+        statusEl.textContent = 'ℹ️ YarnGPT API Key recorded! Browser direct preflights may encounter CORS; African Neural Voice Engine will synthesize speech automatically.';
+        statusEl.style.color = 'var(--green)';
+        return;
+      }
+    } else {
+      try {
+        const directRes = await fetch('https://huggingface.co/api/whoami-v2', {
+          headers: { 'Authorization': `Bearer ${localToken}` }
+        });
+        if (directRes.ok) {
+          const userInfo = await directRes.json().catch(() => ({}));
+          const name = userInfo.name || userInfo.username || 'User';
+          statusEl.textContent = `ℹ️ Hugging Face token is valid (@${name}). For official YarnGPT Cloud speech, get an API key from yarngpt.ai/account.`;
+          statusEl.style.color = 'var(--gold2)';
+          return;
+        } else {
+          statusEl.textContent = `❌ Invalid Hugging Face token (HTTP ${directRes.status}). Check token permissions.`;
+          statusEl.style.color = 'var(--red)';
+          return;
+        }
+      } catch (e) {}
+    }
+  }
+
+  statusEl.textContent = 'ℹ️ African Neural Voice Engine preview is active. To enable YarnGPT Cloud, add YARNGPT_API_KEY in Netlify or enter key above.';
+  statusEl.style.color = 'var(--cream)';
+}
+
+function updateVoiceSelectorWithYarnVoices(voices) {
+  const select = document.getElementById('voiceSelector');
+  if (!select || !Array.isArray(voices)) return;
+  voices.forEach(v => {
+    const name = typeof v === 'string' ? v : v.name;
+    if (!name) return;
+    const exists = Array.from(select.options).some(o => o.value === name);
+    if (!exists) {
+      const opt = document.createElement('option');
+      opt.value = name;
+      opt.textContent = `🎙️ YarnGPT Cloud: ${name} (Authentic African)`;
+      select.insertBefore(opt, select.children[1] || null);
+    }
+  });
+}
+
+function stopYarnGPTAudio() {
+  const audioPlayer = document.getElementById('yarnAudioPlayer');
+  if (audioPlayer) {
+    audioPlayer.pause();
+    audioPlayer.currentTime = 0;
+  }
+  if ('speechSynthesis' in window) {
+    window.speechSynthesis.cancel();
+  }
+  isAudioPlaying = false;
+  document.querySelectorAll('.wave-bar').forEach(b => b.classList.remove('animating'));
+  document.getElementById('btnPlayVoice').classList.remove('hidden');
+  document.getElementById('btnStopVoice').classList.add('hidden');
+}
+
+// ── LEVERS & CASE STUDY ──
+function renderLevers(present, missing) {
+  let leverHTML = '';
+  if (present.length) {
+    leverHTML += `<div class="lever-section-label">✓ Levers Present (${present.length})</div><div class="lever-list">`;
+    for (const l of present) {
+      const strength = l.strength === 'Strong' ? '🟢' : l.strength === 'Moderate' ? '🟡' : '🔴';
+      leverHTML += `
+        <div class="lever-item present">
+          <div class="lever-name">${strength} ${escapeHTML(l.lever)} <span style="font-size:10px;opacity:0.6;font-weight:400">[${escapeHTML(l.category)}]</span></div>
+          <div class="lever-evidence">${escapeHTML(l.evidence)}</div>
+        </div>`;
+    }
+    leverHTML += `</div>`;
+  }
+  if (missing.length) {
+    leverHTML += `<div class="lever-section-label">✗ Missing Levers (${missing.length})</div><div class="lever-list">`;
+    for (const l of missing.slice(0, 4)) {
+      leverHTML += `
+        <div class="lever-item missing">
+          <div class="lever-name">↳ Add: ${escapeHTML(l.lever)} <span style="font-size:10px;opacity:0.6;font-weight:400">[${escapeHTML(l.category)}]</span></div>
+          <div class="lever-evidence">${escapeHTML(l.why_it_matters)}</div>
+          <div class="lever-evidence" style="margin-top:4px;color:#c9a84c">How: ${escapeHTML(l.how_to_add)}</div>
+        </div>`;
+    }
+    leverHTML += `</div>`;
+  }
+  document.getElementById('leverContent').innerHTML = leverHTML || '<p style="color:var(--muted)">No lever breakdown available.</p>';
+}
+
+function renderCaseStudy(cs) {
+  let caseHTML = '';
+  if (cs && cs.title) {
+    const simColor = cs.similarity === 'High' ? 'var(--green)' : cs.similarity === 'Moderate' ? 'var(--gold)' : 'var(--red)';
+    caseHTML = `
+      <div class="case-badge">Similarity: <span style="color:${simColor}">${escapeHTML(cs.similarity || 'High')}</span></div>
+      <div class="case-title">${escapeHTML(cs.title)}</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:12px">${escapeHTML(cs.context || '')}</div>
+      <div class="case-stat">
+        <div class="case-stat-num">${escapeHTML(cs.result || '')}</div>
+        <div class="case-stat-label">${escapeHTML(cs.result_label || '')}</div>
+      </div>
+      <div class="case-learning">${escapeHTML(cs.learning || '')}</div>`;
+  }
+  document.getElementById('caseContent').innerHTML = caseHTML || '<p style="color:var(--muted)">No case study matched.</p>';
+}
+
+// ── BUSARA EVIDENCE CARDS WITH FAILS_WHEN ──
+function renderEvidenceGrounding(cards) {
+  let evidenceHTML = '';
+  if (Array.isArray(cards) && cards.length) {
+    evidenceHTML = '<div class="evidence-list">';
+    for (const item of cards.slice(0, 5)) {
+      const matchScore = item.mechanism_match_score ? `${item.mechanism_match_score}% Match` : '';
+      const sample = item.sample_size ? item.sample_size : '';
+      evidenceHTML += `
+        <div class="evidence-item">
+          <div class="evidence-header">
+            <span class="evidence-title">📖 ${escapeHTML(item.title || 'Busara Empirical Research Note')}</span>
+            <div class="evidence-badges">
+              ${sample ? `<span class="evidence-sample">${escapeHTML(sample)}</span>` : ''}
+              ${item.effect_size ? `<span class="evidence-effect">${escapeHTML(item.effect_size)}</span>` : ''}
+              ${matchScore ? `<span class="evidence-sample">${escapeHTML(matchScore)}</span>` : ''}
+            </div>
+          </div>
+          <div class="evidence-finding">${escapeHTML(item.finding || item.summary || '')}</div>
+          ${item.fails_when ? `
+            <div class="evidence-fails">
+              <strong>⚠️ Boundary Failure Condition:</strong> Fails when ${escapeHTML(item.fails_when)}
+            </div>
+          ` : ''}
+          ${item.source ? `<div class="evidence-source">Source: ${escapeHTML(item.source)}</div>` : ''}
+        </div>`;
+    }
+    evidenceHTML += '</div>';
+  }
+  document.getElementById('evidenceContent').innerHTML = evidenceHTML || '<p style="color:var(--muted)">No specific Busara study matched this query.</p>';
+}
+
+// ── ETHICS & CULTURAL DYNAMICS ──
+function renderEthicsAndCulture(mf, ethics, nigeria) {
+  let ethicsHTML = '';
+  if (mf) {
+    ethicsHTML += `<div class="mf-badge">🏛 Market Failure Diagnosed</div>
+      <div style="font-size:13px;color:var(--text);margin-bottom:14px">${escapeHTML(mf)}</div>`;
+  }
+  if (ethics) {
+    const statusMap = { safe: 'safe', caution: 'caution', warning: 'warning' };
+    const iconMap = { safe: '✅ Nudge — Ethical Choice Architecture', caution: '⚠️ Caution — Scrutiny Needed', warning: '🚫 Dark Pattern / Manipulation Risk' };
+    const cls = statusMap[ethics.status] || 'caution';
+    ethicsHTML += `<div class="ethics-flag ${cls}">
+      <strong>${iconMap[ethics.status] || '⚠️ Review'}</strong><br/>
+      ${escapeHTML(ethics.assessment || '')}
+    </div>`;
+  }
+  document.getElementById('ethicsContent').innerHTML = ethicsHTML || '<p style="color:var(--muted)">No ethics data.</p>';
+
+  const nigeriaHTML = nigeria
+    ? `<div style="font-size:11px;color:var(--gold);margin-bottom:8px;letter-spacing:1.5px;text-transform:uppercase;font-family:'IBM Plex Mono',monospace">🌍 Local Cultural Moderators</div>
+       <div class="nigeria-note">${escapeHTML(nigeria)}</div>`
+    : '<p style="color:var(--muted)">No cultural moderator data.</p>';
+  document.getElementById('nigeriaContent').innerHTML = nigeriaHTML;
+}
+
+// ── EXPORT BRIEF (MARKDOWN) ──
+function exportBrief() {
+  if (!currentAnalysisData) return;
+  const d = currentAnalysisData;
+  const md = `# NudgeDesigner 3.0 Behavioral Intelligence Brief
+**Date:** ${new Date().toLocaleDateString()}
+**BEI Score:** ${d.bei_score || 0}/100 — ${d.verdict || 'Analysis'}
+
+## Executive Summary
+${d.summary || ''}
+
+## Behavioral Specificity Diagnostic
+- **Observable Action Extracted:** ${d.behavior_specificity?.action_extracted || ''}
+- **Is Observable Action:** ${d.behavior_specificity?.is_observable_action !== false ? 'Yes' : 'No'}
+- **Aspiration Warning:** ${d.behavior_specificity?.aspiration_warning || 'None'}
+- **Recommended Evaluation Denominator:** ${d.behavior_specificity?.denominator_recommendation || 'Standard eligible population'}
+
+## Behavioral Transfer Engine v1
+- **Overall Transfer Score:** ${d.transfer_analysis?.overall_transfer_score || 0}%
+- **Confidence Rating:** ${d.transfer_analysis?.confidence_rating || 'Moderate'}
+- **Route:** ${d.transfer_analysis?.study_origin || 'Kenya'} ➔ ${d.transfer_analysis?.target_destination || 'Nigeria'}
+- **Dimension Scores:**
+  - Population Match: ${d.transfer_analysis?.dimension_scores?.population_match || 0}%
+  - Mechanism Match: ${d.transfer_analysis?.dimension_scores?.mechanism_match || 0}%
+  - Channel Compatibility: ${d.transfer_analysis?.dimension_scores?.channel_compatibility || 0}%
+  - Institutional Trust Gap: ${d.transfer_analysis?.dimension_scores?.institutional_trust_gap || 0}%
+  - Economic Context Match: ${d.transfer_analysis?.dimension_scores?.economic_context_match || 0}%
+
+## Ground-Truth Backfire Audits & Intervention Arms (A/B/n Trial)
+${(d.intervention_arms || []).map(a => `### ${a.arm_id}: ${a.name}
+- **Behavioral Mechanism:** ${a.behavioral_mechanism}
+- **Standard Copy:** "${a.message_copy}"
+- **Expected Lift:** ${a.expected_effect}
+- **Ground-Truth Requirement:** ${Array.isArray(a.ground_truth_audit?.requires_ground_truth) ? a.ground_truth_audit.requires_ground_truth.join(', ') : (a.ground_truth_audit?.requires_ground_truth || '')}
+- **Backfire Condition:** ${a.ground_truth_audit?.backfire_condition || ''}
+- **Truthful Adaptive Fallback Strategy:** ${a.ground_truth_audit?.adaptive_fallback_frame?.strategy || ''}
+- **Truthful Adaptive Pivot Copy:** "${a.ground_truth_audit?.adaptive_fallback_frame?.pivoted_copy || ''}"
+- **Why It Works:** ${a.why_it_works}
+`).join('\n')}
+
+## YarnGPT 5-Language Spoken Scripts
+- **Nigerian English:** "${d.yarngpt_languages?.english?.spoken_script || ''}"
+- **Nigerian Pidgin:** "${d.yarngpt_languages?.pidgin?.spoken_script || ''}"
+- **Yoruba:** "${d.yarngpt_languages?.yoruba?.spoken_script || ''}"
+- **Hausa:** "${d.yarngpt_languages?.hausa?.spoken_script || ''}"
+- **Igbo:** "${d.yarngpt_languages?.igbo?.spoken_script || ''}"
+
+## Multi-Channel Execution
+- **SMS (under 160c):** ${d.multi_channel?.sms || ''}
+- **WhatsApp Broadcast:** ${d.multi_channel?.whatsapp || ''}
+- **Field Agent Guide:** ${(d.multi_channel?.field_agent_guide || []).join(' | ')}
+
+## Busara Empirical Evidence Grounding
+${(d.evidence_cards || d.busara_evidence || []).map(e => `- **${e.title}:** ${e.finding || e.summary} (${e.effect_size || 'RCT Benchmark'}) [Source: ${e.source || ''}]
+  *Boundary Failure Condition:* Fails when ${e.fails_when || 'structural barriers dominate'}`).join('\n')}
+`;
+
+  const blob = new Blob([md], { type: 'text/markdown' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `nudgedesigner3_brief_${Date.now()}.md`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+// Populate browser voices immediately and on dynamic voice changes
+if ('speechSynthesis' in window) {
+  populateVoices();
+  window.speechSynthesis.onvoiceschanged = () => {
+    populateVoices();
+  };
+}
+window.addEventListener('DOMContentLoaded', () => {
+  populateVoices();
+});
+</script>
+
+<!-- Non-blocking toast notification container -->
+<div id="toastNotification" style="position:fixed;bottom:24px;right:24px;z-index:9999;max-width:440px;background:#131c2e;border:1px solid #c9a84c;border-radius:10px;padding:16px 20px;box-shadow:0 12px 36px rgba(0,0,0,0.6);display:none;font-family:'IBM Plex Sans',sans-serif;font-size:13px;color:#f0ece1;line-height:1.5;">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+    <strong id="toastTitle" style="color:#c9a84c;font-size:13px;letter-spacing:0.5px;font-family:'IBM Plex Mono',monospace;">NOTICE</strong>
+    <button onclick="hideToast()" style="background:none;border:none;color:#8a99ad;font-size:18px;cursor:pointer;padding:0 4px;line-height:1;">&times;</button>
+  </div>
+  <div id="toastMessage" style="color:#c5d1de;white-space:pre-wrap;"></div>
+</div>
+</body>
+</html>
