@@ -55,52 +55,6 @@ A comprehensive, publication-grade Behavioral Intelligence Brief featuring:
 ---
 
 ## 2. Technical System Architecture
-
-```mermaid
-flowchart TD
-    subgraph Client["Frontend Client (Single Page App)"]
-        UI["Modern Semantic UI (HTML5/CSS3)"]
-        Compiler["Behavioral Problem Compiler"]
-        AudioPlayer["HTML5 Neural Audio Player"]
-        LocalEngine["Resilient Client Fallback Engine"]
-    end
-
-    subgraph Edge["Netlify Edge & Serverless Runtime"]
-        Proxy["Netlify CDN & Route Rewrite (/api/*)"]
-        Fn["analyze.mjs (Netlify Function v2 / ESM)"]
-        RAG["Busara RAG In-Memory Retrieval (TF-IDF + Boost)"]
-        Repair["Delimiter-Stack Truncation Auto-Repair"]
-    end
-
-    subgraph External["External Cloud Intelligence"]
-        Corpus[("60+ Busara RCT Corpus (JSON)")]
-        GeminiGate{"Multi-Model Gemini Cascade"}
-        M1["gemini-3.5-flash-lite (450ms / Fresh Quota Tier)"]
-        M2["gemini-3.5-flash (Budget: 0)"]
-        M3["gemini-2.5-flash (Budget: 0)"]
-        M4["gemini-flash-lite-latest"]
-        YarnAPI["YarnGPT Cloud TTS API (api.yarngpt.ai)"]
-    end
-
-    UI --> Compiler
-    Compiler --> Proxy
-    Proxy --> Fn
-    Fn --> RAG
-    Corpus --> RAG
-    Fn --> GeminiGate
-    GeminiGate -->|Tier 1 (8s)| M1
-    GeminiGate -->|Tier 2 (8s)| M2
-    GeminiGate -->|Tier 3 (8s)| M3
-    GeminiGate -->|Tier 4 (8s)| M4
-    Fn --> Repair
-    Repair --> Proxy
-    Proxy --> UI
-    UI --> AudioPlayer
-    AudioPlayer --> Fn
-    Fn --> YarnAPI
-    Compiler -.->|Network Outage Fallback| LocalEngine
-```
-
 ### 2.1 Tech Stack & Specifications
 * **Frontend**: Vanilla ES6+ JavaScript, custom CSS custom properties, IBM Plex typography. **Zero external dependencies**, zero frontend build toolchain (eliminates client bundle bloat, compile steps, and supply chain vulnerabilities).
 * **Backend Runtime**: Netlify Serverless Functions v2 (`analyze.mjs`), executed in Node.js ES Modules environment with instant cold-start execution.
